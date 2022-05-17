@@ -7,7 +7,7 @@ import Widget from './Widget';
 
 const DEFAULT_OPTIONS = {
     width: 200,
-    height: 300,
+    height: 'fit-content',
     position: 'top-left',
 };
 
