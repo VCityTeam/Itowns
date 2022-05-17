@@ -11,7 +11,20 @@ const DEFAULT_OPTIONS = {
     position: 'top-left',
 };
 
+/**
+ * example path : "/examples/widgets_camera_positioner.html"
+ *
+ * @extends Widget
+ *
+ * @property {HTMLElement} domElement An html div containing the minimap.
+ */
 class CameraPositioner extends Widget {
+    /**
+     * It creates a widget that displays the camera's position and rotation, and allows the user to
+     * change them
+     * @param {View} view - The view to which the camera-positioner is linked. Only work with {@link PlanarView}
+     * @param {Object} [options] - An object containing the options of the widget.
+     */
     constructor(view, options = {}) {
         // ---------- BUILD PROPERTIES ACCORDING TO DEFAULT OPTIONS AND OPTIONS PASSED IN PARAMETERS : ----------
 
@@ -24,39 +37,50 @@ class CameraPositioner extends Widget {
         this.view = view;
 
         // Initialize the text content of the camera-positioner, which will later be updated by a numerical value.
-        this.domElement.innerHTML = 'Camera-positioner';
+        this.domElement.innerHTML = 'Camera Positioner';
+
+        /* Creating a vector of inputs for the camera position. */
         const coordinatesInputElement = this.createInputVector(
             ['x', 'y', 'z'],
             'camera_coordinates ►',
             100,
         );
         coordinatesInputElement.fold = true;
+        /* A function that is called when the title of the input vector is clicked. It changes the title of the input vector and the display of the input vector. */
         coordinatesInputElement.title.onclick = () => {
-            this.innerHTML = coordinatesInputElement.fold ? 'camera_coordinates ▼' : 'camera_coordinates ►';
-            coordinatesInputElement.inputVector.style.display = coordinatesInputElement.fold ? 'grid' : 'none';
+            this.innerHTML = coordinatesInputElement.fold
+                ? 'camera_coordinates ▼'
+                : 'camera_coordinates ►';
+            coordinatesInputElement.inputVector.style.display =
+                coordinatesInputElement.fold ? 'grid' : 'none';
             coordinatesInputElement.fold = !coordinatesInputElement.fold;
         };
-
         this.domElement.appendChild(coordinatesInputElement.title);
         this.domElement.appendChild(coordinatesInputElement.inputVector);
         this.coordinatesInputElement = coordinatesInputElement;
+        /* Setting the camera position to the camera positioner. */
         this.setCoordinatesInputs(view.camera.camera3D.position);
 
-
+        /* Creating a vector of inputs for the camera position. */
         const rotationInputElement = this.createInputVector(
             ['x', 'y', 'z'],
             'camera_rotation ►',
             100,
         );
         rotationInputElement.fold = true;
+        /* A function that is called when the title of the input vector is clicked. It changes the title of the input vector and the display of the input vector. */
         rotationInputElement.title.onclick = () => {
-            this.innerHTML = rotationInputElement.fold ? 'camera_rotation ▼' : 'camera_rotation ►';
-            rotationInputElement.inputVector.style.display = rotationInputElement.fold ? 'grid' : 'none';
+            this.innerHTML = rotationInputElement.fold
+                ? 'camera_rotation ▼'
+                : 'camera_rotation ►';
+            rotationInputElement.inputVector.style.display =
+                rotationInputElement.fold ? 'grid' : 'none';
             rotationInputElement.fold = !rotationInputElement.fold;
         };
         this.domElement.appendChild(rotationInputElement.title);
         this.domElement.appendChild(rotationInputElement.inputVector);
         this.rotationInputElement = rotationInputElement;
+        /* Setting the rotation inputs to the camera's rotation. */
         this.setRotationInputs(view.camera.camera3D.rotation);
 
         const travelButton = document.createElement('button');
@@ -112,14 +136,14 @@ class CameraPositioner extends Widget {
         } else {
             console.warn(
                 "The 'view' linked to camera-positioner widget is neither a 'GlobeView' nor a 'PlanarView'. The " +
-                "camera-positioner wont automatically update. You can implement its update automation using 'camera-positioner.update' " +
-                'method.',
+                    "camera-positioner wont automatically update. You can implement its update automation using 'camera-positioner.update' " +
+                    'method.',
             );
         }
     }
 
     /**
-     * Update the camera-positioner inputs.
+     * Update the camera-positioner inputs elements.
      */
     update() {
         this.setCoordinatesInputs(this.view.camera.camera3D.position);
@@ -191,6 +215,10 @@ class CameraPositioner extends Widget {
         }
     }
 
+    /**
+     * It takes a vector3, and sets the values of the input elements to the values of the vector
+     * @param {THREE.Vector3}  vec3 - The vector3 object that contains the x, y, and z coordinates inputs to.
+     */
     setCoordinatesInputs(vec3) {
         const coordinatesInputEls =
             this.coordinatesInputElement.inputVector.getElementsByTagName(
@@ -212,6 +240,11 @@ class CameraPositioner extends Widget {
         }
     }
 
+    /**
+     * It takes a vector3, and sets the rotation input elements to the values of the vector3 object
+     * @param {THREE.Vector3} vec3 - The vector3 object that contains the x, y, and z values that you want to set the
+     * rotation inputs to.
+     */
     setRotationInputs(vec3) {
         const rotationInputEls =
             this.rotationInputElement.inputVector.getElementsByTagName('input');
