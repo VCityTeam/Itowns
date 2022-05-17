@@ -27,19 +27,33 @@ class CameraPositioner extends Widget {
         this.domElement.innerHTML = 'Camera-positioner';
         const coordinatesInputElement = this.createInputVector(
             ['x', 'y', 'z'],
-            'camera_coordinates',
+            'camera_coordinates ►',
             100,
         );
+        coordinatesInputElement.fold = true;
+        coordinatesInputElement.title.onclick = () => {
+            this.innerHTML = coordinatesInputElement.fold ? 'camera_coordinates ▼' : 'camera_coordinates ►';
+            coordinatesInputElement.inputVector.style.display = coordinatesInputElement.fold ? 'grid' : 'none';
+            coordinatesInputElement.fold = !coordinatesInputElement.fold;
+        };
+
         this.domElement.appendChild(coordinatesInputElement.title);
         this.domElement.appendChild(coordinatesInputElement.inputVector);
         this.coordinatesInputElement = coordinatesInputElement;
         this.setCoordinatesInputs(view.camera.camera3D.position);
 
+
         const rotationInputElement = this.createInputVector(
             ['x', 'y', 'z'],
-            'camera_rotation',
+            'camera_rotation ►',
             100,
         );
+        rotationInputElement.fold = true;
+        rotationInputElement.title.onclick = () => {
+            this.innerHTML = rotationInputElement.fold ? 'camera_rotation ▼' : 'camera_rotation ►';
+            rotationInputElement.inputVector.style.display = rotationInputElement.fold ? 'grid' : 'none';
+            rotationInputElement.fold = !rotationInputElement.fold;
+        };
         this.domElement.appendChild(rotationInputElement.title);
         this.domElement.appendChild(rotationInputElement.inputVector);
         this.rotationInputElement = rotationInputElement;
@@ -48,15 +62,13 @@ class CameraPositioner extends Widget {
         const travelButton = document.createElement('button');
         travelButton.innerHTML = 'TRAVEL';
         const _this = this;
-        travelButton.onclick = function () {
+        travelButton.onclick = () => {
             const newCameraCoordinates = _this.inputVectorToVector(
                 coordinatesInputElement.inputVector,
             );
-            console.log('Coordinates: ', newCameraCoordinates);
             const newCameraRotation = _this.inputVectorToVector(
                 rotationInputElement.inputVector,
             );
-            console.log('Rotation: ', newCameraRotation);
             const newCameraQuaternion = new THREE.Quaternion();
             newCameraQuaternion.setFromEuler(
                 new THREE.Euler(
@@ -66,7 +78,6 @@ class CameraPositioner extends Widget {
                 ),
                 'XYZ',
             );
-            console.log('Quaternion: ', newCameraQuaternion);
             view.controls.initiateTravel(
                 newCameraCoordinates,
                 'auto',
@@ -111,7 +122,6 @@ class CameraPositioner extends Widget {
      * Update the camera-positioner inputs.
      */
     update() {
-        console.log('this.update');
         this.setCoordinatesInputs(this.view.camera.camera3D.position);
         this.setRotationInputs(this.view.camera.camera3D.rotation);
     }
@@ -128,13 +138,13 @@ class CameraPositioner extends Widget {
 
         const inputVector = document.createElement('div');
         inputVector.id = `${vectorName}_inputVector`;
-        inputVector.style.display = 'grid';
+        inputVector.classList.add('widgets-camera-positioner-inputvector');
         for (let iInput = 0; iInput < labels.length; iInput++) {
             const labelElement = document.createElement('label');
             labelElement.innerHTML = labels[iInput];
 
             const componentElement = document.createElement('input');
-            componentElement.id = vectorName + labelElement.innerHTML;
+            componentElement.id = `${vectorName}_${labelElement.innerHTML}`;
             componentElement.type = 'number';
             componentElement.setAttribute('value', '0');
             componentElement.step = step;
