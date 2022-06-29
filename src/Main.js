@@ -17,7 +17,10 @@ export { MAIN_LOOP_EVENTS } from 'Core/MainLoop';
 export { default as View } from 'Core/View';
 export { VIEW_EVENTS } from 'Core/View';
 export { default as FeatureProcessing } from 'Process/FeatureProcessing';
-export { updateLayeredMaterialNodeImagery, updateLayeredMaterialNodeElevation } from 'Process/LayeredMaterialNodeProcessing';
+export {
+    updateLayeredMaterialNodeImagery,
+    updateLayeredMaterialNodeElevation,
+} from 'Process/LayeredMaterialNodeProcessing';
 export { default as OrientedImageCamera } from 'Renderer/OrientedImageCamera';
 export { default as PointsMaterial } from 'Renderer/PointsMaterial';
 export { default as GlobeControls } from 'Controls/GlobeControls';
@@ -33,12 +36,20 @@ export { default as DEMUtils } from 'Utils/DEMUtils';
 export { default as CameraUtils } from 'Utils/CameraUtils';
 export { default as OrientationUtils } from 'Utils/OrientationUtils';
 export { default as ShaderChunk } from 'Renderer/Shader/ShaderChunk';
-export { getMaxColorSamplerUnitsCount, colorLayerEffects } from 'Renderer/LayeredMaterial';
+export {
+    getMaxColorSamplerUnitsCount,
+    colorLayerEffects,
+} from 'Renderer/LayeredMaterial';
 export { default as Capabilities } from 'Core/System/Capabilities';
 export { CAMERA_TYPE } from 'Renderer/Camera';
 
 // Internal itowns format
-export { default as Feature, FeatureCollection, FeatureGeometry, FEATURE_TYPES } from 'Core/Feature';
+export {
+    default as Feature,
+    FeatureCollection,
+    FeatureGeometry,
+    FEATURE_TYPES,
+} from 'Core/Feature';
 export { default as Style } from 'Core/Style';
 export { default as Label } from 'Core/Label';
 
@@ -55,7 +66,12 @@ export { default as PotreeLayer } from 'Layer/PotreeLayer';
 export { default as C3DTilesLayer } from 'Layer/C3DTilesLayer';
 export { default as TiledGeometryLayer } from 'Layer/TiledGeometryLayer';
 export { default as OrientedImageLayer } from 'Layer/OrientedImageLayer';
-export { STRATEGY_MIN_NETWORK_TRAFFIC, STRATEGY_GROUP, STRATEGY_PROGRESSIVE, STRATEGY_DICHOTOMY } from 'Layer/LayerUpdateStrategy';
+export {
+    STRATEGY_MIN_NETWORK_TRAFFIC,
+    STRATEGY_GROUP,
+    STRATEGY_PROGRESSIVE,
+    STRATEGY_DICHOTOMY,
+} from 'Layer/LayerUpdateStrategy';
 export { default as ColorLayersOrdering } from 'Renderer/ColorLayersOrdering';
 export { default as GlobeLayer } from 'Core/Prefab/Globe/GlobeLayer';
 export { default as PlanarLayer } from 'Core/Prefab/Planar/PlanarLayer';
@@ -90,7 +106,11 @@ export { default as LASParser } from 'Parser/LASParser';
 export { default as ISGParser } from 'Parser/ISGParser';
 export { default as GDFParser } from 'Parser/GDFParser';
 export { default as GTXParser } from 'Parser/GTXParser';
-export { enableDracoLoader, glTFLoader, legacyGLTFLoader } from 'Parser/B3dmParser';
+export {
+    enableDracoLoader,
+    glTFLoader,
+    legacyGLTFLoader,
+} from 'Parser/B3dmParser';
 
 // 3D Tiles classes and extensions
 // Exported to allow one to implement its own 3D Tiles extension which needs to
@@ -101,4 +121,9 @@ export { default as C3DTBatchTable } from './Core/3DTiles/C3DTBatchTable';
 export { default as C3DTExtensions } from './Core/3DTiles/C3DTExtensions';
 export { default as C3DTilesTypes } from './Core/3DTiles/C3DTilesTypes';
 export { default as C3DTBatchTableHierarchyExtension } from './Core/3DTiles/C3DTBatchTableHierarchyExtension';
-export { process3dTilesNode, $3dTilesCulling, $3dTilesSubdivisionControl } from 'Process/3dTilesProcessing';
+export { default as C3DTCityObject } from './Core/3DTiles/C3DTCityObject';
+export {
+    process3dTilesNode,
+    $3dTilesCulling,
+    $3dTilesSubdivisionControl,
+} from 'Process/3dTilesProcessing';
