@@ -169,18 +169,57 @@
                             .applyMatrix4(mesh.matrixWorld);
                     }
                 }
-
-                console.log(cityObjectManager);
             };
 
             cityObjectManager.onLoad3DTilesLayers = function (tile) {
                 cityObjectManager.fillCityObjects(tile);
-
+                const meshesColorArrays = {};
                 cityObjectManager.cityObjects.forEach(function (co) {
-                    console.log(co);
-                    co.tile.content.children[co.meshId].material =
-                        new itowns.THREE.MeshBasicMaterial({ color: 0xffff00 });
+                    const mesh = co.tile.content.children[co.meshId];
+                    let colorArray = new Float32Array(
+                        mesh.geometry.attributes.position.count * 3,
+                    );
+                    if (meshesColorArrays[mesh.id]) {
+                        colorArray = meshesColorArrays[mesh.id].colorArray;
+                    } else {
+                        meshesColorArrays[mesh.id] = {
+                            mesh: mesh,
+                            colorArray: colorArray,
+                        };
+                    }
+
+                    const cityObjectColorR = Math.random();
+                    const cityObjectColorG = Math.random();
+                    const cityObjectColorB = Math.random();
+
+                    for (
+                        let i = co.indexStart * 3;
+                        i < co.indexStart * 3 + co.indexCount * 3;
+                        i += 3
+                    ) {
+                        colorArray[i] = cityObjectColorR;
+                        colorArray[i + 1] = cityObjectColorG;
+                        colorArray[i + 2] = cityObjectColorB;
+                    }
                 });
+
+                for (let meshId of Object.keys(meshesColorArrays)) {
+                    meshesColorArrays[meshId].mesh.geometry.colors =
+                        meshesColorArrays[meshId].colorArray;
+
+                    meshesColorArrays[meshId].mesh.geometry.setAttribute(
+                        'color',
+                        new itowns.THREE.BufferAttribute(
+                            meshesColorArrays[meshId].mesh.geometry.colors,
+                            3,
+                        ),
+                    );
+
+                    meshesColorArrays[meshId].mesh.material =
+                        new itowns.THREE.MeshBasicMaterial({
+                            vertexColors: itowns.THREE.VertexColors,
+                        });
+                }
             };
             // Create the 3D Tiles layer
             var $3dTilesLayerBTHierarchy = new itowns.C3DTilesLayer(
