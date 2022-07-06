@@ -220,7 +220,7 @@
     width: 50%;
     height: 50%;
 
-    background-image: url("https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/GUI/widget-logo.svg");
+    background-image: url('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/GUI/widget-logo.svg');
     background-size: 100%;
 }
 #widgets-navigation #zoom-out-logo {
@@ -235,7 +235,7 @@
 
     border-radius: 50%;
 
-    background-image: url("https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/GUI/compass.svg");
+    background-image: url('https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/GUI/compass.svg');
     background-repeat: no-repeat;
     background-size: auto 90%;
     background-position: center;
@@ -269,7 +269,7 @@
     color: #222222;
 }
 
-/**/
+/* ---------- CAMERA POSITIONNER WIDGET : ------------------------------------------------------------------------------- */
 
 #widgets-camera-positioner {
     position: absolute;
@@ -277,7 +277,7 @@
     padding: 0 10px;
 
     color: #ffffff;
-    font-family: "Open Sans", sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 15px;
 }
 
@@ -305,7 +305,7 @@
     background-image: linear-gradient(#31333600, #313336ff);
 
     color: #ffffff;
-    font-family: "Open Sans", sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 15px;
 }
 
