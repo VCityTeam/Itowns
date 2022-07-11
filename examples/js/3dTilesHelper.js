@@ -7,8 +7,10 @@
 // eslint-disable-next-line
 function fillHTMLWithPickingInfo(event, pickingArg) {
     if (!pickingArg.layer.isC3DTilesLayer) {
-        console.warn('Function fillHTMLWithPickingInfo only works' +
-            ' for C3DTilesLayer layers.');
+        console.warn(
+            'Function fillHTMLWithPickingInfo only works' +
+                ' for C3DTilesLayer layers.',
+        );
         return;
     }
 
@@ -19,14 +21,19 @@ function fillHTMLWithPickingInfo(event, pickingArg) {
 
     // Get intersected objects
     var intersects = pickingArg.view.pickObjectsAt(event, 5, pickingArg.layer);
-    if (intersects.length === 0) { return; }
+    if (intersects.length === 0) {
+        return;
+    }
 
     // Get information from intersected objects (from the batch table and
     // eventually the 3D Tiles extensions
-    var featureDisplayableInfo = pickingArg.layer.getInfoFromIntersectObject(intersects);
-
+    var featureDisplayableInfo =
+        pickingArg.layer.getInfoFromIntersectObject(intersects);
     if (featureDisplayableInfo) {
         // eslint-disable-next-line
-        pickingArg.htmlDiv.appendChild(createHTMLListFromObject(featureDisplayableInfo));
+        pickingArg.htmlDiv.appendChild(
+            createHTMLListFromObject(featureDisplayableInfo),
+        );
+        return featureDisplayableInfo;
     }
 }
