@@ -68,6 +68,7 @@
                 const meshes = tile.content.children;
                 let k = 0;
                 for (let [index, mesh] of meshes.entries()) {
+                    mesh.geometry = mesh.geometry.toNonIndexed();
                     let attributes = mesh.geometry.attributes;
                     let totalVertices = attributes.position.count;
 
@@ -171,9 +172,11 @@
                 }
             };
 
-            cityObjectManager.onLoad3DTilesLayers = function (tile) {
+            cityObjectManager.onLoad3DTilesLayersAlternate = function (tile) {
                 cityObjectManager.fillCityObjects(tile);
+                debugger;
                 const meshesColorArrays = {};
+                let i = 0;
                 cityObjectManager.cityObjects.forEach(function (co) {
                     const mesh = co.tile.content.children[co.meshId];
                     let colorArray = new Float32Array(
@@ -187,10 +190,15 @@
                             colorArray: colorArray,
                         };
                     }
-
-                    const cityObjectColorR = Math.random();
-                    const cityObjectColorG = Math.random();
-                    const cityObjectColorB = Math.random();
+                    let cityObjectColorR = Math.random();
+                    let cityObjectColorG = Math.random();
+                    let cityObjectColorB = Math.random();
+                    if (i > 5) {
+                        cityObjectColorR = mesh.material.color.r;
+                        cityObjectColorG = mesh.material.color.g;
+                        cityObjectColorB = mesh.material.color.b;
+                    }
+                    i++;
 
                     for (
                         let i = co.indexStart * 3;
@@ -215,12 +223,33 @@
                         ),
                     );
 
-                    meshesColorArrays[meshId].mesh.material =
-                        new itowns.THREE.MeshBasicMaterial({
-                            vertexColors: itowns.THREE.VertexColors,
-                        });
+                    meshesColorArrays[meshId].mesh.material.vertexColors =
+                        itowns.THREE.VertexColors;
                 }
             };
+
+            cityObjectManager.onLoad3DTilesLayers = function (tile) {
+                cityObjectManager.fillCityObjects(tile);
+                const mesh = tile.content.children[0];
+
+                mesh.geometry.groups = [];
+                let defaultMaterial = Array.isArray(mesh.material)
+                    ? mesh.material[0]
+                    : mesh.material;
+
+                // Reset the materials
+                mesh.material = [
+                    defaultMaterial,
+                    new itowns.THREE.MeshStandardMaterial({ color: 'red' }),
+                ];
+
+                cityObjectManager.cityObjects.forEach(function (co) {
+                    const mesh = co.tile.content.children[co.meshId];
+
+                    mesh.geometry.addGroup(co.indexStart, co.indexCount, 0);
+                });
+            };
+
             // Create the 3D Tiles layer
             var $3dTilesLayerBTHierarchy = new itowns.C3DTilesLayer(
                 '3d-tiles-bt-hierarchy',
@@ -235,6 +264,7 @@
                 view,
             );
 
+            let i;
             // add an event for picking the 3D Tiles layer and displaying
             // information about the picked feature in an html div
             var pickingArgs = {};
@@ -246,7 +276,36 @@
                 .then(function _() {
                     window.addEventListener(
                         'mousemove',
-                        (event) => fillHTMLWithPickingInfo(event, pickingArgs),
+                        (event) => {
+                            let toNotifyChange = false;
+                            const info = fillHTMLWithPickingInfo(
+                                event,
+                                pickingArgs,
+                            );
+                            if (i != info) {
+                                toNotifyChange = true;
+                                i = info;
+                            }
+
+                            if (toNotifyChange) {
+                                cityObjectManager.cityObjects.forEach(function (
+                                    co,
+                                ) {
+                                    const mesh =
+                                        co.tile.content.children[co.meshId];
+                                    if (i && co.batchId == i.batchID) {
+                                        mesh.geometry.groups[
+                                            co.batchId
+                                        ].materialIndex = 1;
+                                    } else {
+                                        mesh.geometry.groups[
+                                            co.batchId
+                                        ].materialIndex = 0;
+                                    }
+                                });
+                                view.notifyChange();
+                            }
+                        },
                         false,
                     );
                 });
