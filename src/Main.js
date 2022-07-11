@@ -123,6 +123,7 @@ export { default as C3DTExtensions } from './Core/3DTiles/C3DTExtensions';
 export { default as C3DTilesTypes } from './Core/3DTiles/C3DTilesTypes';
 export { default as C3DTBatchTableHierarchyExtension } from './Core/3DTiles/C3DTBatchTableHierarchyExtension';
 export { default as C3DTCityObject } from './Core/3DTiles/C3DTCityObject';
+export { default as C3DTCityObjectManager } from './Core/3DTiles/C3DTCityObjectManager';
 export {
     process3dTilesNode,
     $3dTilesCulling,
