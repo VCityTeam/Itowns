@@ -76,6 +76,11 @@
                     onTileContentLoaded: function (tile) {
                         cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(
                             tile,
+                            [
+                                new itowns.THREE.MeshBasicMaterial({
+                                    color: 0xf0f420,
+                                }),
+                            ],
                         );
                     },
                 },

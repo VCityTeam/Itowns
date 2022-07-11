@@ -108,11 +108,16 @@ class C3DTCityObjectManager {
     }
 
     /**
-     * It takes a tile, finds all the city objects in it, and then adds a group to the geometry for each
-     * city object
-     * @param {Object3D} tile - The tile that is being processed.
+     * It takes a tile and a list of materials and assigns the materials to the city objects in the tile
+     * @param {Object3D} tile - The tile to be processed.
+     * @param {Array.THREE.Material}[secondaryMaterials] - An array of materials to be used for the city objects.
      */
-    createGeometryGroupsOfCityObjectsMeshes(tile) {
+    createGeometryGroupsOfCityObjectsMeshes(
+        tile,
+        secondaryMaterials = [
+            new THREE.MeshStandardMaterial({ color: 'blue' }),
+        ],
+    ) {
         this.fillCityObjects(tile);
         const mesh = tile.content.children[0];
 
@@ -122,10 +127,10 @@ class C3DTCityObjectManager {
             : mesh.material;
 
         // Reset the materials
-        mesh.material = [
-            defaultMaterial,
-            new THREE.MeshStandardMaterial({ color: 'blue' }),
-        ];
+        mesh.material = [defaultMaterial];
+        secondaryMaterials.forEach((m) => {
+            mesh.material.push(m);
+        });
 
         this.cityObjects.forEach((co) => {
             const mesh = co.tile.content.children[co.meshId];
