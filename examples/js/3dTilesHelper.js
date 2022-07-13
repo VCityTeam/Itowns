@@ -34,6 +34,26 @@ function fillHTMLWithPickingInfo(event, pickingArg) {
         pickingArg.htmlDiv.appendChild(
             createHTMLListFromObject(featureDisplayableInfo),
         );
+        featureDisplayableInfo.tile = getTileFromObjectIntersected(
+            intersects[0].object,
+        );
         return featureDisplayableInfo;
     }
+}
+
+function getTileFromObjectIntersected(object) {
+    if (!object) {
+        throw 'Tile not loaded in view';
+    }
+
+    //Find the 'Object3D' part of the tile
+    while (!!object.parent && !(object.type === 'Object3D')) {
+        object = object.parent;
+    }
+
+    if (!object.batchTable) {
+        throw 'Invalid tile : no batch table';
+    }
+
+    return object;
 }

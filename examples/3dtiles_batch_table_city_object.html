@@ -94,7 +94,8 @@
                     registeredExtensions: extensions,
                     onTileContentLoaded: function (tile) {
                         console.log('loaded');
-                        tile.cityObjectManager = new itowns.C3DTCityObjectManager();
+                        tile.cityObjectManager =
+                            new itowns.C3DTCityObjectManager();
 
                         tile.cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(
                             tile,
@@ -131,8 +132,10 @@
                                 toNotifyChange = true;
                                 i = info;
                             }
+                            if (info && info.tile && toNotifyChange) {
+                                const cityObjectManager =
+                                    info.tile.cityObjectManager;
 
-                            if (toNotifyChange) {
                                 cityObjectManager.cityObjects.forEach(function (
                                     co,
                                 ) {
