@@ -118,24 +118,29 @@ class C3DTCityObjectManager {
             new THREE.MeshStandardMaterial({ color: 'blue' }),
         ],
     ) {
+        if (!tile.content) {
+            return;
+        }
         this.fillCityObjects(tile);
-        const mesh = tile.content.children[0];
+        const cityObjects = this.cityObjects;
+        tile.content.children.forEach((mesh) => {
+            mesh.geometry.groups = [];
+            console.log(mesh);
+            const defaultMaterial = Array.isArray(mesh.material)
+                ? mesh.material[0]
+                : mesh.material;
 
-        mesh.geometry.groups = [];
-        const defaultMaterial = Array.isArray(mesh.material)
-            ? mesh.material[0]
-            : mesh.material;
+            // Reset the materials
+            mesh.material = [defaultMaterial];
+            secondaryMaterials.forEach((m) => {
+                mesh.material.push(m);
+            });
 
-        // Reset the materials
-        mesh.material = [defaultMaterial];
-        secondaryMaterials.forEach((m) => {
-            mesh.material.push(m);
-        });
+            cityObjects.forEach((co) => {
+                const mesh = co.tile.content.children[co.meshId];
 
-        this.cityObjects.forEach((co) => {
-            const mesh = co.tile.content.children[co.meshId];
-
-            mesh.geometry.addGroup(co.indexStart, co.indexCount, 0);
+                mesh.geometry.addGroup(co.indexStart, co.indexCount, 0);
+            });
         });
     }
 }
