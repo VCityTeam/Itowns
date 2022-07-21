@@ -129,27 +129,14 @@
 
                             //reset the selected city object
                             if (coSelected) {
-                                const mesh =
-                                    coSelected.tile.content.children[
-                                        coSelected.meshId
-                                    ];
-                                mesh.geometry.groups[
-                                    coSelected.batchId
-                                ].materialIndex = 0;
+                                coSelected.setIndexMaterial(0); //set the material to the default one
                             }
                             // set the selected city object
                             if (info && info.tile) {
-                                const cityObjectManager =
-                                    info.tile.cityObjectManager;
+                                const coManager = info.tile.cityObjectManager;
                                 coSelected =
-                                    cityObjectManager.cityObjects[info.batchID];
-                                const mesh =
-                                    coSelected.tile.content.children[
-                                        coSelected.meshId
-                                    ];
-                                mesh.geometry.groups[
-                                    coSelected.batchId
-                                ].materialIndex = 1;
+                                    coManager.cityObjects[info.batchID];
+                                coSelected.setIndexMaterial(1); //set the material to the selected one
                             } else {
                                 coSelected = null;
                             }
