@@ -80,6 +80,18 @@ class C3DTCityObject {
     }
 
     /**
+     * "Set the material index of the batch to the given index."
+     *
+     * The first line of the function gets the mesh from the tile's content. The second line sets
+     * the material index of the batch to the given index
+     * @param {number} indexMaterial - the index of the material to use for this batch
+     */
+    setIndexMaterial(indexMaterial) {
+        const mesh = this.tile.content.children[this.meshId];
+        mesh.geometry.groups[this.batchId].materialIndex = indexMaterial;
+    }
+
+    /**
      * Last index of the vertex array.
      */
     get indexEnd() {
