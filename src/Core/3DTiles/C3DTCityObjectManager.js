@@ -125,7 +125,6 @@ class C3DTCityObjectManager {
         const cityObjects = this.cityObjects;
         tile.content.children.forEach((mesh) => {
             mesh.geometry.groups = [];
-            console.log(mesh);
             const defaultMaterial = Array.isArray(mesh.material)
                 ? mesh.material[0]
                 : mesh.material;
