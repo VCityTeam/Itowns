@@ -57,3 +57,5 @@ function getTileFromObjectIntersected(object) {
 
     return object;
 }
+
+export { getTileFromObjectIntersected };
