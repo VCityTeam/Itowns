@@ -100,12 +100,27 @@
                     source: new itowns.C3DTilesSource({
                         url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Demo/UD-Demo-vcity-py3dtilers-lyon/Rhone_2021_BDTOPO/tileset.json',
                     }),
-                    generateCityObjectsFlag: true,
+                    cityObjectConf: {
+                        secondaryMaterials: [
+                            new itowns.THREE.MeshStandardMaterial({
+                                color: 0xf0f420,
+                            }),
+                        ],
+                    },
                 },
                 view,
             );
 
             itowns.View.prototype.addLayer.call(view, $3DTilesLayerLyon);
+
+            // Lights
+            var dirLight = new itowns.THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(-0.9, 0.3, 1);
+            dirLight.updateMatrixWorld();
+            view.scene.add(dirLight);
+
+            var ambLight = new itowns.THREE.AmbientLight(0xffffff, 0.2);
+            view.scene.add(ambLight);
 
             // ---------- ADD CITY OBJECT PICKER WIDGET : ----------
             console.log($3DTilesLayerLyon.id);

@@ -63,14 +63,15 @@ class C3DTilesLayer extends GeometryLayer {
         this.isC3DTilesLayer = true;
         this.sseThreshold = config.sseThreshold || 16;
         this.cleanupDelay = config.cleanupDelay || 1000;
-        this.generateCityObjectsFlag = config.generateCityObjectsFlag || false;
+        this.generateCityObjectsFlag = !!config.cityObjectConf;
+        this.secondaryMaterials = config.cityObjectConf.secondaryMaterials;
 
         this.onTileContentLoaded = (tile) => {
             if (config.onTileContentLoaded) {
                 config.onTileContentLoaded.call(this, tile);
             }
 
-            if (config.generateCityObjectsFlag) {
+            if (this.generateCityObjectsFlag) {
                 this.generateCityObjects.call(this, tile);
             }
         };
@@ -139,11 +140,10 @@ class C3DTilesLayer extends GeometryLayer {
     generateCityObjects(tile) {
         tile.cityObjectManager = new C3DTCityObjectManager();
 
-        tile.cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(tile, [
-            new THREE.MeshStandardMaterial({
-                color: 0xf0f420,
-            }),
-        ]);
+        tile.cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(
+            tile,
+            this.secondaryMaterials,
+        );
     }
 
     getObjectToUpdateForAttachedLayers(meta) {
