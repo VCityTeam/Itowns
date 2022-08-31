@@ -1,8 +1,13 @@
 import * as THREE from 'three';
 import GeometryLayer from 'Layer/GeometryLayer';
-import { init3dTilesLayer, pre3dTilesUpdate, process3dTilesNode } from 'Process/3dTilesProcessing';
+import {
+    init3dTilesLayer,
+    pre3dTilesUpdate,
+    process3dTilesNode,
+} from 'Process/3dTilesProcessing';
 import C3DTileset from 'Core/3DTiles/C3DTileset';
 import C3DTExtensions from 'Core/3DTiles/C3DTExtensions';
+import C3DTCityObjectManager from '../Core/3DTiles/C3DTCityObjectManager';
 
 const update = process3dTilesNode();
 
@@ -58,37 +63,69 @@ class C3DTilesLayer extends GeometryLayer {
         this.isC3DTilesLayer = true;
         this.sseThreshold = config.sseThreshold || 16;
         this.cleanupDelay = config.cleanupDelay || 1000;
-        this.onTileContentLoaded = config.onTileContentLoaded || (() => {});
+        this.generateCityObjects = config.generateCityObjects || false;
+
+        this.onTileContentLoaded = (tile) => {
+            if (config.onTileContentLoaded) {
+                config.onTileContentLoaded.call(this, tile);
+            }
+
+            if (config.generateCityObjects) {
+                this.generateCityObjects.call(this, tile);
+            }
+        };
+
         this.protocol = '3d-tiles';
         this.overrideMaterials = config.overrideMaterials ?? false;
+
         this.name = config.name;
-        this.registeredExtensions = config.registeredExtensions || new C3DTExtensions();
+        this.registeredExtensions =
+            config.registeredExtensions || new C3DTExtensions();
 
         this._cleanableTiles = [];
 
         const resolve = this.addInitializationStep();
 
         this.source.whenReady.then((tileset) => {
-            this.tileset = new C3DTileset(tileset, this.source.baseUrl, this.registeredExtensions);
+            this.tileset = new C3DTileset(
+                tileset,
+                this.source.baseUrl,
+                this.registeredExtensions,
+            );
             // Verify that extensions of the tileset have been registered in the layer
             if (this.tileset.extensionsUsed) {
                 for (const extensionUsed of this.tileset.extensionsUsed) {
                     // if current extension is not registered
-                    if (!this.registeredExtensions.isExtensionRegistered(extensionUsed)) {
+                    if (
+                        !this.registeredExtensions.isExtensionRegistered(
+                            extensionUsed,
+                        )
+                    ) {
                         // if it is required to load the tileset
-                        if (this.tileset.extensionsRequired &&
-                            this.tileset.extensionsRequired.includes(extensionUsed)) {
+                        if (
+                            this.tileset.extensionsRequired &&
+                            this.tileset.extensionsRequired.includes(
+                                extensionUsed,
+                            )
+                        ) {
                             console.error(
-                                `3D Tiles tileset required extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
+                                `3D Tiles tileset required extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`,
+                            );
                         } else {
                             console.warn(
-                                `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
+                                `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`,
+                            );
                         }
                     }
                 }
             }
             // TODO: Move all init3dTilesLayer code to constructor
-            init3dTilesLayer(view, view.mainLoop.scheduler, this, tileset.root).then(resolve);
+            init3dTilesLayer(
+                view,
+                view.mainLoop.scheduler,
+                this,
+                tileset.root,
+            ).then(resolve);
         });
     }
 
@@ -98,6 +135,15 @@ class C3DTilesLayer extends GeometryLayer {
 
     update(context, layer, node) {
         return update(context, layer, node);
+    }
+    generateCityObjects(tile) {
+        tile.cityObjectManager = new C3DTCityObjectManager();
+
+        tile.cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(tile, [
+            new THREE.MeshStandardMaterial({
+                color: 0xf0f420,
+            }),
+        ]);
     }
 
     getObjectToUpdateForAttachedLayers(meta) {

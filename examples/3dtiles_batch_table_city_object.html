@@ -32,9 +32,9 @@
             );
             var placement = {
                 coord: new itowns.Coordinates(
-                    'EPSG:3946',
-                    1842258.906522941,
-                    5175805.233629481,
+                    'EPSG:4326',
+                    -75.61349,
+                    40.044259,
                 ),
                 range: 200,
                 tilt: 10,
@@ -43,23 +43,7 @@
 
             var viewerDiv = document.getElementById('viewerDiv');
 
-            var extent = new itowns.Extent(
-                'EPSG:3946',
-                1837500,
-                1848000,
-                5167500,
-                5180900,
-            );
-            var view = new itowns.PlanarView(viewerDiv, extent, {
-                disableSkirt: false,
-                maxSubdivisionLevel: 1,
-                controls: {
-                    maxZenithAngle: 180,
-                    groundLevel: -100,
-                    handleCollision: false,
-                },
-                placement,
-            });
+            var view = new itowns.GlobeView(viewerDiv, placement);
 
             setupLoadingScreen(viewerDiv, view);
 
@@ -89,22 +73,10 @@
                 {
                     name: 'BTHierarchy',
                     source: new itowns.C3DTilesSource({
-                        url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-1_2015/tileset.json',
+                        url: 'https://raw.githubusercontent.com/AnalyticalGraphicsInc/cesium/master/Apps/SampleData/Cesium3DTiles/Hierarchy/BatchTableHierarchy/tileset.json',
                     }),
                     registeredExtensions: extensions,
-                    onTileContentLoaded: function (tile) {
-                        tile.cityObjectManager =
-                            new itowns.C3DTCityObjectManager();
-
-                        tile.cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(
-                            tile,
-                            [
-                                new itowns.THREE.MeshBasicMaterial({
-                                    color: 0xf0f420,
-                                }),
-                            ],
-                        );
-                    },
+                    generateCityObjects: true,
                 },
                 view,
             );
@@ -112,6 +84,7 @@
             let coSelected = null;
             // add an event for picking the 3D Tiles layer and displaying
             // information about the picked feature in an html div
+
             var pickingArgs = {};
             pickingArgs.htmlDiv = document.getElementById('featureInfo');
             pickingArgs.view = view;
