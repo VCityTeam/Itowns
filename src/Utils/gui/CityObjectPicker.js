@@ -1,9 +1,5 @@
-import { CONTROL_EVENTS } from 'Controls/GlobeControls';
-import { GLOBE_VIEW_EVENTS } from 'Core/Prefab/GlobeView';
-import { PLANAR_CONTROL_EVENT } from 'Controls/PlanarControls';
-import * as THREE from 'three';
 import Widget from './Widget';
-import View from '../../Core/View';
+
 import { getTileFromObjectIntersected } from '../../../examples/js/3dTilesHelper';
 
 const DEFAULT_OPTIONS = {
@@ -40,6 +36,8 @@ class CityObjectPicker extends Widget {
 
         this.layerIDs = layerIDs;
 
+        this.coSelected = null;
+
         // Initialize the text content of the city-object-picker, which will later be updated by a numerical value.
         this.domElement.innerHTML = 'City Object Picker';
 
@@ -50,19 +48,19 @@ class CityObjectPicker extends Widget {
     pick(event) {
         const info = this.getInfoFromCityObject(event);
 
-        // // reset the selected city object
-        // if (coSelected) {
-        //     coSelected.setIndexMaterial(0); // set the material to the default one
-        // }
-        // // set the selected city object
-        // if (info && info.tile) {
-        //     const coManager = info.tile.cityObjectManager;
-        //     coSelected = coManager.cityObjects[info.batchID];
-        //     coSelected.setIndexMaterial(1); // set the material to the selected one
-        // } else {
-        //     coSelected = null;
-        // }
-        // view.notifyChange();
+        // reset the selected city object
+        if (this.coSelected) {
+            this.coSelected.setIndexMaterial(0); // set the material to the default one
+        }
+        // set the selected city object
+        if (info && info.tile) {
+            const coManager = info.tile.cityObjectManager;
+            this.coSelected = coManager.cityObjects[info.batchInfo.batchID];
+            this.coSelected.setIndexMaterial(1); // set the material to the selected one
+        } else {
+            this.coSelected = null;
+        }
+        this.view.notifyChange();
     }
 
     getInfoFromCityObject(event) {
