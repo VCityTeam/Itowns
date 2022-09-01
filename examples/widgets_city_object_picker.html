@@ -39,7 +39,7 @@
                     '+towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
             );
 
-            const viewExtent = new itowns.Extent(
+            var viewExtent = new itowns.Extent(
                 'EPSG:3946',
                 1837816.94334,
                 1847692.32501,
@@ -66,31 +66,47 @@
 
             // ---------- DISPLAY CONTEXTUAL DATA : ----------
 
-            // Add one imagery layer to the scene. This layer's properties are defined in a json file, but it could be
-            // defined as a plain js object. See `Layer` documentation for more info.
-            itowns.Fetcher.json('layers/JSONLayers/Ortho.json').then(
-                (config) => {
-                    config.source = new itowns.WMTSSource(config.source);
-                    view.addLayer(
-                        new itowns.ColorLayer(config.id, config),
-                    ).then(debugMenu.addLayerGUI.bind(debugMenu));
+            // Add a WMS imagery source
+            var wmsImagerySource = new itowns.WMSSource({
+                extent: viewExtent,
+                name: 'Ortho2009_vue_ensemble_16cm_CC46',
+                url: 'https://download.data.grandlyon.com/wms/grandlyon',
+                version: '1.3.0',
+                crs: 'EPSG:3946',
+                format: 'image/jpeg',
+            });
+
+            // Add a WMS imagery layer
+            var wmsImageryLayer = new itowns.ColorLayer('wms_imagery', {
+                updateStrategy: {
+                    type: itowns.STRATEGY_DICHOTOMY,
+                    options: {},
                 },
+                source: wmsImagerySource,
+            });
+            view.addLayer(wmsImageryLayer).then(
+                debugMenu.addLayerGUI.bind(debugMenu),
             );
 
-            // Add two elevation layers, each with a different level of detail. Here again, each layer's properties are
-            // defined in a json file.
-            function addElevationLayerFromConfig(config) {
-                config.source = new itowns.WMTSSource(config.source);
-                view.addLayer(
-                    new itowns.ElevationLayer(config.id, config),
-                ).then(debugMenu.addLayerGUI.bind(debugMenu));
-            }
-            itowns.Fetcher.json('layers/JSONLayers/WORLD_DTM.json').then(
-                addElevationLayerFromConfig,
-            );
-            itowns.Fetcher.json('layers/JSONLayers/IGN_MNT_HIGHRES.json').then(
-                addElevationLayerFromConfig,
-            );
+            // Add a WMS elevation source
+            var wmsElevationSource = new itowns.WMSSource({
+                extent: viewExtent,
+                url: 'https://download.data.grandlyon.com/wms/grandlyon',
+                name: 'MNT2012_Altitude_10m_CC46',
+                crs: 'EPSG:3946',
+                width: 256,
+                format: 'image/jpeg',
+            });
+
+            // Add a WMS elevation layer
+            var wmsElevationLayer = new itowns.ElevationLayer('wms_elevation', {
+                useColorTextureElevation: true,
+                colorTextureElevationMinZ: 144,
+                colorTextureElevationMaxZ: 622,
+                source: wmsElevationSource,
+            });
+
+            view.addLayer(wmsElevationLayer).then(debugMenu.addLayerGUI.bind(debugMenu));
 
             // Create the 3D Tiles layer
             var $3DTilesLayerLyon = new itowns.C3DTilesLayer(
@@ -98,7 +114,7 @@
                 {
                     name: 'BTHierarchy',
                     source: new itowns.C3DTilesSource({
-                        url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Demo/UD-Demo-vcity-py3dtilers-lyon/Rhone_2021_BDTOPO/tileset.json',
+                        url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Demo/UD-Demo-vcity-py3dtilers-lyon/Lyon-1_2018_Textured/tileset.json',
                     }),
                     cityObjectConf: {
                         secondaryMaterials: [
