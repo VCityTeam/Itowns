@@ -3,7 +3,6 @@ import Widget from './Widget';
 import { getTileFromObjectIntersected } from '../../../examples/js/3dTilesHelper';
 
 const DEFAULT_OPTIONS = {
-    width: 200,
     height: 'fit-content',
     position: 'top-right',
 };
@@ -20,7 +19,7 @@ class CityObjectPicker extends Widget {
      * It creates a widget that displays the camera's position and rotation, and allows the user to
      * change them
      * @param {View} view - The view to which the city-object-picker is linked. Only work with {@link PlanarView}
-     * @param {[string]}  layerIDs - The layer IDs to which the city-object-picker is linked.
+     * @param {[string]} layerIDs - The layer IDs to which the city-object-picker is linked.
      * @param {Object} [options] - An object containing the options of the widget.
      */
     constructor(view, layerIDs, options = {}) {
@@ -31,6 +30,7 @@ class CityObjectPicker extends Widget {
         // ---------- this.domElement SETTINGS SPECIFIC TO city-object-picker : ----------
 
         this.domElement.id = 'widgets-city-object-picker';
+        this.selectionInfo = null;
 
         this.view = view;
 
@@ -41,8 +41,10 @@ class CityObjectPicker extends Widget {
         // Initialize the text content of the city-object-picker, which will later be updated by a numerical value.
         this.domElement.innerHTML = 'City Object Picker';
 
-        this.width = options.width || DEFAULT_OPTIONS.width;
         window.addEventListener('mousedown', this.pick.bind(this));
+
+        this.initUI();
+        this.width = options.width || DEFAULT_OPTIONS.width;
     }
 
     pick(event) {
@@ -61,6 +63,8 @@ class CityObjectPicker extends Widget {
             this.coSelected = null;
         }
         this.view.notifyChange();
+
+        this.updateSelectionInfo(info);
     }
 
     getInfoFromCityObject(event) {
@@ -76,6 +80,51 @@ class CityObjectPicker extends Widget {
             return info;
         }
         return null;
+    }
+
+    initUI() {
+        const selectionSection = document.createElement('section');
+
+        const selectionTitle = document.createElement('h3');
+        selectionTitle.innerHTML = 'Selected city object : ';
+
+        const selectionInfo = document.createElement('ul');
+        this.selectionInfo = selectionInfo;
+
+        selectionSection.appendChild(selectionTitle);
+        selectionSection.appendChild(selectionInfo);
+
+        this.domElement.appendChild(selectionSection);
+
+        this.updateSelectionInfo(null);
+    }
+
+    updateSelectionInfo(info) {
+        if (info) {
+            const { layer, batchInfo, tile } = info;
+
+            this.selectionInfo.innerHTML = '';
+
+            const tileIDLi = document.createElement('li');
+            tileIDLi.innerHTML = `Tile ID : ${tile.id}`;
+            this.selectionInfo.appendChild(tileIDLi);
+
+            const batchIDLi = document.createElement('li');
+            batchIDLi.innerHTML = `Batch ID : ${batchInfo.batchID}`;
+            this.selectionInfo.appendChild(batchIDLi);
+
+            const layerIDLi = document.createElement('li');
+            layerIDLi.innerHTML = `Layer ID : ${layer.id}`;
+            this.selectionInfo.appendChild(layerIDLi);
+
+            for (const keys of Object.keys(batchInfo.batchTable)) {
+                const li = document.createElement('li');
+                li.innerHTML = `BatchTable ${keys} : ${batchInfo.batchTable[keys]}`;
+                this.selectionInfo.appendChild(li);
+            }
+        } else {
+            this.selectionInfo.innerHTML = 'No city object selected';
+        }
     }
 }
 
