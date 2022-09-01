@@ -1,6 +1,8 @@
+import CameraUtils from 'Utils/CameraUtils';
 import Widget from './Widget';
 
 import { getTileFromObjectIntersected } from '../../../examples/js/3dTilesHelper';
+import Coordinates from '../../Core/Geographic/Coordinates';
 
 const DEFAULT_OPTIONS = {
     height: 'fit-content',
@@ -20,9 +22,10 @@ class CityObjectPicker extends Widget {
      * change them
      * @param {View} view - The view to which the city-object-picker is linked. Only work with {@link PlanarView}
      * @param {[string]} layerIDs - The layer IDs to which the city-object-picker is linked.
+     * @param {Object} config - The configuration of the city-object-picker.
      * @param {Object} [options] - An object containing the options of the widget.
      */
-    constructor(view, layerIDs, options = {}) {
+    constructor(view, layerIDs, config = {}, options = {}) {
         // ---------- BUILD PROPERTIES ACCORDING TO DEFAULT OPTIONS AND OPTIONS PASSED IN PARAMETERS : ----------
 
         super(view, options, DEFAULT_OPTIONS);
@@ -35,6 +38,9 @@ class CityObjectPicker extends Widget {
         this.view = view;
 
         this.layerIDs = layerIDs;
+        this.rangeFocus = config.rangeFocus || 200;
+        this.tiltFocus = config.tiltFocus || 60;
+
         this.coSelected = null;
         this.savedCameraPosRot = null;
 
@@ -82,6 +88,10 @@ class CityObjectPicker extends Widget {
             return;
         }
         const info = this.getInfoFromCityObject(event);
+
+        if (!info) {
+            return;
+        }
 
         // reset the selected city object
         if (this.coSelected) {
@@ -162,7 +172,34 @@ class CityObjectPicker extends Widget {
 
             const focusButton = document.createElement('button');
             focusButton.innerHTML = 'Focus';
-            focusButton.addEventListener('click', () => {});
+            const _this = this;
+            focusButton.addEventListener('click', () => {
+                if (!_this.coSelected) {
+                    return;
+                }
+
+                const view = _this.view;
+                const camera = view.camera.camera3D;
+                const co = _this.coSelected;
+                // const cameraTransformOptions =
+                //     CameraUtils.getTransformCameraLookingAtTarget(
+                //         view,
+                //         camera,
+                //         co.centroid.clone(),
+                //     );
+                const coord = new Coordinates(
+                    view.referenceCrs,
+                    co.centroid.clone(),
+                );
+
+                const params = {
+                    coord,
+                    range: _this.rangeFocus,
+                    tilt: _this.tiltFocus,
+                };
+
+                CameraUtils.animateCameraToLookAtTarget(view, camera, params);
+            });
             this.selectionInfo.appendChild(focusButton);
         } else {
             this.selectionInfo.innerHTML = 'No city object selected';
