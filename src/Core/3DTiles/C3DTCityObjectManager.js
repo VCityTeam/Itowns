@@ -123,7 +123,8 @@ class C3DTCityObjectManager {
         }
         this.fillCityObjects(tile);
         const cityObjects = this.cityObjects;
-        tile.content.children.forEach((mesh) => {
+        const meshes = tile.content.children;
+        for (const [index, mesh] of meshes.entries()) {
             mesh.geometry.groups = [];
             const defaultMaterial = Array.isArray(mesh.material)
                 ? mesh.material[0]
@@ -136,11 +137,12 @@ class C3DTCityObjectManager {
             });
 
             cityObjects.forEach((co) => {
-                const mesh = co.tile.content.children[co.meshId];
-
-                mesh.geometry.addGroup(co.indexStart, co.indexCount, 0);
+                if (co.meshId == index) {
+                    co.groupId = mesh.geometry.groups.length;
+                    mesh.geometry.addGroup(co.indexStart, co.indexCount, 0);
+                }
             });
-        });
+        }
     }
 }
 

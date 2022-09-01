@@ -77,6 +77,13 @@ class C3DTCityObject {
          * @type {number}
          */
         this.meshId = meshId;
+
+        /**
+         * The ID of the mesh's geometry group
+         *
+         * @type {number}
+         */
+        this.groupId = 0;
     }
 
     /**
@@ -88,7 +95,7 @@ class C3DTCityObject {
      */
     setIndexMaterial(indexMaterial) {
         const mesh = this.tile.content.children[this.meshId];
-        mesh.geometry.groups[this.batchId].materialIndex = indexMaterial;
+        mesh.geometry.groups[this.groupId].materialIndex = indexMaterial;
     }
 
     /**
