@@ -106,7 +106,9 @@
                 source: wmsElevationSource,
             });
 
-            view.addLayer(wmsElevationLayer).then(debugMenu.addLayerGUI.bind(debugMenu));
+            view.addLayer(wmsElevationLayer).then(
+                debugMenu.addLayerGUI.bind(debugMenu),
+            );
 
             // Create the 3D Tiles layer
             var $3DTilesLayerLyon = new itowns.C3DTilesLayer(
@@ -114,7 +116,7 @@
                 {
                     name: 'BTHierarchy',
                     source: new itowns.C3DTilesSource({
-                        url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Demo/UD-Demo-vcity-py3dtilers-lyon/Lyon-1_2018_Textured/tileset.json',
+                        url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Demo/UD-Demo-vcity-py3dtilers-lyon/Lyon-1_2018_LODS/tileset.json',
                     }),
                     cityObjectConf: {
                         secondaryMaterials: [
