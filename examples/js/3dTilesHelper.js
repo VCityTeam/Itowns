@@ -58,4 +58,14 @@ function getTileFromObjectIntersected(object) {
     return object;
 }
 
-export { getTileFromObjectIntersected };
+function getFirstIntersection(intersects) {
+    for (let inter of intersects) {
+        let tile = getTileFromObjectIntersected(inter.object);
+        if (inter.object.visible && tile.visible && tile.content.visible) {
+            return inter;
+        }
+    }
+    return null;
+}
+
+export { getTileFromObjectIntersected, getFirstIntersection };

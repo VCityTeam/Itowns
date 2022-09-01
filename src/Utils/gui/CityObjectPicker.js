@@ -1,7 +1,10 @@
 import CameraUtils from 'Utils/CameraUtils';
 import Widget from './Widget';
 
-import { getTileFromObjectIntersected } from '../../../examples/js/3dTilesHelper';
+import {
+    getTileFromObjectIntersected,
+    getFirstIntersection,
+} from '../../../examples/js/3dTilesHelper';
 import Coordinates from '../../Core/Geographic/Coordinates';
 
 const DEFAULT_OPTIONS = {
@@ -114,13 +117,16 @@ class CityObjectPicker extends Widget {
         const info = {};
         const intersects = this.view.pickObjectsAt(event, 5, ...this.layerIDs);
         if (intersects.length > 0) {
-            info.tile = getTileFromObjectIntersected(intersects[0].object);
-            info.layer = info.tile.layer;
-            info.batchInfo = info.layer.getInfoFromIntersectObject([
-                intersects[0],
-            ]);
+            const firstIntersect = getFirstIntersection(intersects);
+            if (firstIntersect != null) {
+                info.tile = getTileFromObjectIntersected(firstIntersect.object);
+                info.layer = info.tile.layer;
+                info.batchInfo = info.layer.getInfoFromIntersectObject([
+                    firstIntersect,
+                ]);
 
-            return info;
+                return info;
+            }
         }
         return null;
     }
