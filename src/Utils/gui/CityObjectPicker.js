@@ -93,7 +93,6 @@ class CityObjectPicker extends Widget {
 
         selectionSection.appendChild(selectionTitle);
         selectionSection.appendChild(selectionInfo);
-
         this.domElement.appendChild(selectionSection);
 
         this.updateSelectionInfo(null);
@@ -104,6 +103,11 @@ class CityObjectPicker extends Widget {
             const { layer, batchInfo, tile } = info;
 
             this.selectionInfo.innerHTML = '';
+
+            const color = layer.secondaryMaterials[0].color;
+            this.selectionInfo.style.color = `rgb(${color.r * 255}, ${
+                color.g * 255
+            }, ${color.b * 255})`;
 
             const tileIDLi = document.createElement('li');
             tileIDLi.innerHTML = `Tile ID : ${tile.id}`;
@@ -124,6 +128,7 @@ class CityObjectPicker extends Widget {
             }
         } else {
             this.selectionInfo.innerHTML = 'No city object selected';
+            this.selectionInfo.style.color = 'whitesmoke';
         }
     }
 }
