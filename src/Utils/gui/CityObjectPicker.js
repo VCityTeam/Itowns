@@ -35,19 +35,52 @@ class CityObjectPicker extends Widget {
         this.view = view;
 
         this.layerIDs = layerIDs;
-
         this.coSelected = null;
+        this.savedCameraPosRot = null;
 
         // Initialize the text content of the city-object-picker, which will later be updated by a numerical value.
         this.domElement.innerHTML = 'City Object Picker';
 
-        window.addEventListener('mousedown', this.pick.bind(this));
+        window.addEventListener('mousedown', () => {
+            this.saveCameraPosRot();
+        });
+        window.addEventListener('mouseup', this.pick.bind(this));
 
         this.initUI();
         this.width = options.width || DEFAULT_OPTIONS.width;
     }
 
+    saveCameraPosRot() {
+        this.savedCameraPosRot = this.getCameraPosRot();
+    }
+
+    getCameraPosRot() {
+        return {
+            position: this.view.camera.camera3D.position.clone(),
+            rotation: this.view.camera.camera3D.rotation.clone(),
+        };
+    }
+
+    comparePosRot(posRot1, posRot2) {
+        [posRot1, posRot2].forEach((posRot) => {
+            posRot.position.x = Math.floor(posRot.position.x);
+            posRot.position.y = Math.floor(posRot.position.y);
+            posRot.position.z = Math.floor(posRot.position.z);
+        });
+
+        return (
+            posRot1.position.equals(posRot2.position) &&
+            posRot1.rotation.equals(posRot2.rotation)
+        );
+    }
+
     pick(event) {
+        if (
+            event.button != 0 ||
+            !this.comparePosRot(this.savedCameraPosRot, this.getCameraPosRot())
+        ) {
+            return;
+        }
         const info = this.getInfoFromCityObject(event);
 
         // reset the selected city object
