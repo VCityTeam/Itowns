@@ -105,9 +105,9 @@ class CityObjectPicker extends Widget {
             this.selectionInfo.innerHTML = '';
 
             const color = layer.secondaryMaterials[0].color;
-            this.selectionInfo.style.color = `rgb(${color.r * 255}, ${
-                color.g * 255
-            }, ${color.b * 255})`;
+            this.selectionInfo.style.backgroundColor = `rgba(${
+                color.r * 255
+            }, ${color.g * 255}, ${color.b * 255}, ${0.15})`;
 
             const tileIDLi = document.createElement('li');
             tileIDLi.innerHTML = `Tile ID : ${tile.id}`;
@@ -126,9 +126,14 @@ class CityObjectPicker extends Widget {
                 li.innerHTML = `BatchTable ${keys} : ${batchInfo.batchTable[keys]}`;
                 this.selectionInfo.appendChild(li);
             }
+
+            const focusButton = document.createElement('button');
+            focusButton.innerHTML = 'Focus';
+            focusButton.addEventListener('click', () => {});
+            this.selectionInfo.appendChild(focusButton);
         } else {
             this.selectionInfo.innerHTML = 'No city object selected';
-            this.selectionInfo.style.color = 'whitesmoke';
+            this.selectionInfo.style.backgroundColor = '';
         }
     }
 }
