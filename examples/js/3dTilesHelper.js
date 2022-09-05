@@ -41,6 +41,11 @@ function fillHTMLWithPickingInfo(event, pickingArg) {
     }
 }
 
+/**
+ * It takes an object and returns the tile that contains it
+ * @param object - The intersected object.
+ * @returns The tile.
+ */
 function getTileFromObjectIntersected(object) {
     if (!object) {
         throw 'Tile not loaded in view';
@@ -58,6 +63,12 @@ function getTileFromObjectIntersected(object) {
     return object;
 }
 
+/**
+ * Return the first intersected object that is visible and has a visible tile and a visible tile
+ * content.
+ * @param intersects - the array of intersections returned by the raycaster
+ * @returns The first intersection that is visible.
+ */
 function getFirstIntersection(intersects) {
     for (let inter of intersects) {
         let tile = getTileFromObjectIntersected(inter.object);
