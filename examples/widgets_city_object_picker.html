@@ -141,13 +141,11 @@
             view.scene.add(ambLight);
 
             // ---------- ADD CITY OBJECT PICKER WIDGET : ----------
-            console.log($3DTilesLayerLyon.id);
             const cityObjectPicker = new itowns_widgets.CityObjectPicker(view, [
                 $3DTilesLayerLyon.id,
             ]);
 
             // ---------- DEBUG TOOLS : ----------
-
             debug.createTileDebugUI(debugMenu.gui, view);
         </script>
     </body>
