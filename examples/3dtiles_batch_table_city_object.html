@@ -76,7 +76,13 @@
                         url: 'https://raw.githubusercontent.com/AnalyticalGraphicsInc/cesium/master/Apps/SampleData/Cesium3DTiles/Hierarchy/BatchTableHierarchy/tileset.json',
                     }),
                     registeredExtensions: extensions,
-                    generateCityObjectsFlag: true,
+                    cityObjectConf: {
+                        secondaryMaterials: [
+                            new itowns.THREE.MeshStandardMaterial({
+                                color: 0xf0f420,
+                            }),
+                        ],
+                    },
                 },
                 view,
             );
