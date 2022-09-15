@@ -70,9 +70,9 @@ class CityObjectPicker extends Widget {
         };
     }
 
-/**
+    /**
  * "Compare two position and rotation of the camera and return true if they are the same."
- * 
+ *
  * The first thing we do is round the position values to the nearest integer. This is because the
  * position values are floats, and we want to compare them as integers
  * @param {Object} posRot1 - The first position and rotation.
@@ -92,7 +92,7 @@ class CityObjectPicker extends Widget {
         );
     }
 
-/**
+    /**
  * If the mouse button is pressed and the camera hasn't moved, then get the city object that was
  * clicked on and update the selection info
  * @param {MouseEvent} event - the event object
@@ -127,7 +127,7 @@ class CityObjectPicker extends Widget {
         this.updateSelectionInfo(info);
     }
 
-/**
+    /**
  * It gets the first intersection of the mouse with a tile, and returns the tile, the layer, and the
  * batch info
  * @param {MouseEvent} event - The event object from the mouse event.
@@ -151,7 +151,7 @@ class CityObjectPicker extends Widget {
         return null;
     }
 
-/**
+    /**
  * It creates a section element, adds a title and a list element to it, and then adds the section to
  * the main DOM element
  */
@@ -171,7 +171,7 @@ class CityObjectPicker extends Widget {
         this.updateSelectionInfo(null);
     }
 
-/* Updating the selection info. */
+    /* Updating the selection info. */
     updateSelectionInfo(info) {
         if (info) {
             const { layer, batchInfo, tile } = info;
