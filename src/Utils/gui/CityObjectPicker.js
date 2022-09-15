@@ -4,7 +4,7 @@ import Widget from './Widget';
 import {
     getTileFromObjectIntersected,
     getFirstIntersection,
-} from '../../../examples/js/3dTilesHelper';
+} from '../Picking3DTilesUtils';
 import Coordinates from '../../Core/Geographic/Coordinates';
 
 const DEFAULT_OPTIONS = {
