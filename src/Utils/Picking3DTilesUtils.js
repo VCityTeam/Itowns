@@ -27,6 +27,7 @@ function getTileFromObjectIntersected(object) {
  * @returns {Object | null} The first intersection that is visible.
  */
 function getFirstIntersection(intersects) {
+    /* Iterating through the array of intersections returned by the raycaster and returning the first intersection that is visible. */
     for (const inter of intersects) {
         const tile = getTileFromObjectIntersected(inter.object);
         if (inter.object.visible && tile.visible && tile.content.visible) {

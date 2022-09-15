@@ -7,7 +7,7 @@ import {
 } from 'Process/3dTilesProcessing';
 import C3DTileset from 'Core/3DTiles/C3DTileset';
 import C3DTExtensions from 'Core/3DTiles/C3DTExtensions';
-import C3DTCityObjectManager from '../Core/3DTiles/C3DTCityObjectManager';
+import C3DTCityObjectManager from 'Core/3DTiles/C3DTCityObjectManager';
 
 const update = process3dTilesNode();
 
@@ -71,6 +71,7 @@ class C3DTilesLayer extends GeometryLayer {
                 config.onTileContentLoaded.call(this, tile);
             }
 
+            /* A flag (boolean) to generate city objects. */
             if (this.generateCityObjectsFlag) {
                 this.generateCityObjects.call(this, tile);
             }
