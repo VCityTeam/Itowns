@@ -71,30 +71,19 @@ class C3DTilesLayer extends GeometryLayer {
                     // if current extension is not registered
                     if (!this.registeredExtensions.isExtensionRegistered(extensionUsed)) {
                         // if it is required to load the tileset
-                        if (
-                            this.tileset.extensionsRequired &&
-                            this.tileset.extensionsRequired.includes(
-                                extensionUsed,
-                            )
-                        ) {
+                        if (this.tileset.extensionsRequired &&
+                            this.tileset.extensionsRequired.includes(extensionUsed)) {
                             console.error(
-                                `3D Tiles tileset required extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`,
-                            );
+                                `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
                         } else {
                             console.warn(
-                                `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`,
-                            );
+                                `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
                         }
                     }
                 }
             }
             // TODO: Move all init3dTilesLayer code to constructor
-            init3dTilesLayer(
-                view,
-                view.mainLoop.scheduler,
-                this,
-                tileset.root,
-            ).then(resolve);
+            init3dTilesLayer(view, view.mainLoop.scheduler, this, tileset.root).then(resolve);
         });
     }
 
@@ -105,6 +94,7 @@ class C3DTilesLayer extends GeometryLayer {
     update(context, layer, node) {
         return update(context, layer, node);
     }
+
     generateCityObjects(tile) {
         tile.cityObjectManager = new C3DTCityObjectManager();
 
