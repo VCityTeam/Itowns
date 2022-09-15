@@ -14,6 +14,8 @@
     right: 10px;
 }
 
+
+
 /* ---------- NAVIGATION WIDGET SETTINGS : -------------------------------------------------------------------------- */
 
 #widgets-navigation {
@@ -40,21 +42,23 @@
 
 /* Define spacing between each navigation widgets according to position and direction settings. */
 #widgets-navigation.column-widget.top-widget > *:not(:first-child),
-#widgets-navigation.column-widget.bottom-widget > *:not(:last-child) {
+#widgets-navigation.column-widget.bottom-widget > *:not(:last-child)  {
     margin-top: 5px;
 }
 #widgets-navigation.column-widget.top-widget > *:not(:last-child),
-#widgets-navigation.column-widget.bottom-widget > *:not(:first-child) {
+#widgets-navigation.column-widget.bottom-widget > *:not(:first-child)  {
     margin-bottom: 5px;
 }
 #widgets-navigation.row-widget.left-widget > *:not(:first-child),
-#widgets-navigation.row-widget.right-widget > *:not(:last-child) {
+#widgets-navigation.row-widget.right-widget > *:not(:last-child)  {
     margin-left: 5px;
 }
 #widgets-navigation.row-widget.left-widget > *:not(:last-child),
-#widgets-navigation.row-widget.right-widget > *:not(:first-child) {
+#widgets-navigation.row-widget.right-widget > *:not(:first-child)  {
     margin-right: 5px;
 }
+
+
 
 /* ---------- NAVIGATION BUTTON BAR : ------------------------------------------------------------------------------- */
 
@@ -74,6 +78,8 @@
 #widgets-navigation.row-widget.right-widget .widget-button-bar {
     flex-direction: row-reverse;
 }
+
+
 
 /* ---------- BUTTONS GENERIC STYLE : ------------------------------------------------------------------------------- */
 
@@ -96,6 +102,8 @@
     background-color: #222222;
 }
 
+
+
 /* ---------- BUTTONS SHAPE AND POSITION WITHIN BUTTON-BAR : -------------------------------------------------------- */
 
 #widgets-navigation .widget-button-bar > .widget-button {
@@ -106,54 +114,30 @@
 }
 
 /* Buttons shape and position within a column direction widget group. */
-#widgets-navigation.column-widget.top-widget
-    .widget-button-bar
-    > .widget-button:first-child:not(:only-child),
-#widgets-navigation.column-widget.bottom-widget
-    .widget-button-bar
-    > .widget-button:last-child:not(:only-child) {
+#widgets-navigation.column-widget.top-widget .widget-button-bar > .widget-button:first-child:not(:only-child),
+#widgets-navigation.column-widget.bottom-widget .widget-button-bar > .widget-button:last-child:not(:only-child) {
     border-radius: 7px 7px 0 0;
 }
-#widgets-navigation.column-widget.top-widget
-    .widget-button-bar
-    > .widget-button:last-child:not(:only-child),
-#widgets-navigation.column-widget.bottom-widget
-    .widget-button-bar
-    > .widget-button:first-child:not(:only-child) {
+#widgets-navigation.column-widget.top-widget .widget-button-bar > .widget-button:last-child:not(:only-child),
+#widgets-navigation.column-widget.bottom-widget .widget-button-bar > .widget-button:first-child:not(:only-child) {
     border-radius: 0 0 7px 7px;
 }
-#widgets-navigation.column-widget.top-widget
-    .widget-button-bar
-    > .widget-button:not(:last-child),
-#widgets-navigation.column-widget.bottom-widget
-    .widget-button-bar
-    > .widget-button:not(:first-child) {
+#widgets-navigation.column-widget.top-widget .widget-button-bar > .widget-button:not(:last-child),
+#widgets-navigation.column-widget.bottom-widget .widget-button-bar > .widget-button:not(:first-child) {
     margin-bottom: -1px;
 }
 
 /* Buttons shape and position within a row direction widget group. */
-#widgets-navigation.row-widget.left-widget
-    .widget-button-bar
-    > .widget-button:first-child:not(:only-child),
-#widgets-navigation.row-widget.right-widget
-    .widget-button-bar
-    > .widget-button:last-child:not(:only-child) {
+#widgets-navigation.row-widget.left-widget .widget-button-bar > .widget-button:first-child:not(:only-child),
+#widgets-navigation.row-widget.right-widget .widget-button-bar > .widget-button:last-child:not(:only-child) {
     border-radius: 7px 0 0 7px;
 }
-#widgets-navigation.row-widget.left-widget
-    .widget-button-bar
-    > .widget-button:last-child:not(:only-child),
-#widgets-navigation.row-widget.right-widget
-    .widget-button-bar
-    > .widget-button:first-child:not(:only-child) {
+#widgets-navigation.row-widget.left-widget .widget-button-bar > .widget-button:last-child:not(:only-child),
+#widgets-navigation.row-widget.right-widget .widget-button-bar > .widget-button:first-child:not(:only-child) {
     border-radius: 0 7px 7px 0;
 }
-#widgets-navigation.row-widget.left-widget
-    .widget-button-bar
-    > .widget-button:not(:last-child),
-#widgets-navigation.row-widget.right-widget
-    .widget-button-bar
-    > .widget-button:not(:first-child) {
+#widgets-navigation.row-widget.left-widget .widget-button-bar > .widget-button:not(:last-child),
+#widgets-navigation.row-widget.right-widget .widget-button-bar > .widget-button:not(:first-child) {
     margin-right: -1px;
 }
 
@@ -161,6 +145,8 @@
 #widgets-navigation .widget-button-bar > .widget-button:only-child {
     border-radius: 7px;
 }
+
+
 
 /* ---------- SPECIFIC SHAPE AND POSITION FOR ZOOM-IN AND ZOOM-OUT BUTTON-BAR AND BUTTONS : ------------------------- */
 
@@ -175,37 +161,25 @@
 }
 
 /* Zoom buttons shape and position within a COLUMN direction widget group. */
-#widgets-navigation.column-widget
-    #zoom-button-bar
-    > .widget-button:first-child:not(:only-child) {
+#widgets-navigation.column-widget #zoom-button-bar > .widget-button:first-child:not(:only-child) {
     border-radius: 7px 7px 0 0;
 }
-#widgets-navigation.column-widget
-    #zoom-button-bar
-    > .widget-button:last-child:not(:only-child) {
+#widgets-navigation.column-widget #zoom-button-bar > .widget-button:last-child:not(:only-child) {
     border-radius: 0 0 7px 7px;
 }
-#widgets-navigation.column-widget.bottom-widget
-    #zoom-button-bar
-    > .widget-button:not(:last-child) {
+#widgets-navigation.column-widget.bottom-widget #zoom-button-bar > .widget-button:not(:last-child) {
     margin-top: 0;
     margin-bottom: -1px;
 }
 
 /* Zoom buttons shape and position within a ROW direction navigation menu. */
-#widgets-navigation.row-widget
-    #zoom-button-bar
-    > .widget-button:first-child:not(:only-child) {
+#widgets-navigation.row-widget #zoom-button-bar > .widget-button:first-child:not(:only-child) {
     border-radius: 0 7px 7px 0;
 }
-#widgets-navigation.row-widget
-    #zoom-button-bar
-    > .widget-button:last-child:not(:only-child) {
+#widgets-navigation.row-widget #zoom-button-bar > .widget-button:last-child:not(:only-child) {
     border-radius: 7px 0 0 7px;
 }
-#widgets-navigation.row-widget.left-widget
-    #zoom-button-bar
-    > .widget-button:not(:last-child) {
+#widgets-navigation.row-widget.left-widget #zoom-button-bar > .widget-button:not(:last-child) {
     margin-right: 0;
     margin-left: -1px;
 }
@@ -227,6 +201,8 @@
     background-position: center -100%;
 }
 
+
+
 /* ---------- SPECIFIC COMPASS SETTINGS : --------------------------------------------------------------------------- */
 
 #widgets-navigation #compass {
@@ -240,6 +216,8 @@
     background-size: auto 90%;
     background-position: center;
 }
+
+
 
 /* ---------- MINIMAP WIDGET SETTINGS : ----------------------------------------------------------------------------- */
 
@@ -283,6 +261,7 @@
     background-color: #22222274;
 }
 
+
 /* ---------- SCALE WIDGET SETTINGS : ------------------------------------------------------------------------------- */
 
 #widgets-scale {
@@ -314,6 +293,8 @@
     justify-content: flex-end;
 }
 
+
+
 /* ---------- SEARCHBAR WIDGET SETTINGS : --------------------------------------------------------------------------- */
 
 #widgets-searchbar {
@@ -337,6 +318,8 @@
     box-shadow: 0 0 10px #222222;
 }
 
+
+
 /* ---------- SEARCHBAR INPUT AND SUGGESTIONS : --------------------------------------------------------------------- */
 
 #widgets-searchbar:not(.bottom-widget) form > *:last-child:not(:only-child),
@@ -350,9 +333,7 @@
 #widgets-searchbar form > *:only-child {
     border-radius: 7px;
 }
-#widgets-searchbar:not(.bottom-widget)
-    form
-    > *:not(:first-child):not(:last-child) {
+#widgets-searchbar:not(.bottom-widget) form > *:not(:first-child):not(:last-child) {
     border-bottom: none;
 }
 #widgets-searchbar.bottom-widget form > *:not(:first-child):not(:last-child) {

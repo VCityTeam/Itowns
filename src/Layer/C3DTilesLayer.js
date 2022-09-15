@@ -1,13 +1,9 @@
 import * as THREE from 'three';
 import GeometryLayer from 'Layer/GeometryLayer';
-import {
-    init3dTilesLayer,
-    pre3dTilesUpdate,
-    process3dTilesNode,
-} from 'Process/3dTilesProcessing';
+import { init3dTilesLayer, pre3dTilesUpdate, process3dTilesNode } from 'Process/3dTilesProcessing';
 import C3DTileset from 'Core/3DTiles/C3DTileset';
 import C3DTExtensions from 'Core/3DTiles/C3DTExtensions';
-import C3DTCityObjectManager from '../Core/3DTiles/C3DTCityObjectManager';
+import C3DTCityObjectManager from 'Core/3DTiles/C3DTCityObjectManager';
 
 const update = process3dTilesNode();
 
@@ -51,6 +47,7 @@ class C3DTilesLayer extends GeometryLayer {
                 config.onTileContentLoaded.call(this, tile);
             }
 
+            /* A flag (boolean) to generate city objects. */
             if (this.generateCityObjectsFlag) {
                 this.generateCityObjects.call(this, tile);
             }
@@ -58,33 +55,21 @@ class C3DTilesLayer extends GeometryLayer {
 
         this.protocol = '3d-tiles';
         // custom cesium shaders are not functional;
-        this.overrideMaterials =
-            config.overrideMaterials !== undefined
-                ? config.overrideMaterials
-                : true;
+        this.overrideMaterials = config.overrideMaterials !== undefined ? config.overrideMaterials : true;
         this.name = config.name;
-        this.registeredExtensions =
-            config.registeredExtensions || new C3DTExtensions();
+        this.registeredExtensions = config.registeredExtensions || new C3DTExtensions();
 
         this._cleanableTiles = [];
 
         const resolve = this.addInitializationStep();
 
         this.source.whenReady.then((tileset) => {
-            this.tileset = new C3DTileset(
-                tileset,
-                this.source.baseUrl,
-                this.registeredExtensions,
-            );
+            this.tileset = new C3DTileset(tileset, this.source.baseUrl, this.registeredExtensions);
             // Verify that extensions of the tileset have been registered in the layer
             if (this.tileset.extensionsUsed) {
                 for (const extensionUsed of this.tileset.extensionsUsed) {
                     // if current extension is not registered
-                    if (
-                        !this.registeredExtensions.isExtensionRegistered(
-                            extensionUsed,
-                        )
-                    ) {
+                    if (!this.registeredExtensions.isExtensionRegistered(extensionUsed)) {
                         // if it is required to load the tileset
                         if (
                             this.tileset.extensionsRequired &&
