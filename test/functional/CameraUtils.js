@@ -36,7 +36,7 @@ describe('Camera utils with globe example', function _() {
                 view,
                 camera,
                 p,
-            ).then((final) => final.range);
+            ).then(final => final.range);
         }, params);
 
         assert.ok(Math.abs(result - params.range) / params.range < 0.05);
@@ -55,7 +55,7 @@ describe('Camera utils with globe example', function _() {
                 view,
                 camera,
                 { coord },
-            ).then((final) => final.coord);
+            ).then(final => final.coord);
         }, params);
         assert.equal(Math.round(result.x), params.longitude);
         assert.equal(Math.round(result.y), params.latitude);
@@ -69,7 +69,7 @@ describe('Camera utils with globe example', function _() {
                 view,
                 camera,
                 p,
-            ).then((final) => final.tilt);
+            ).then(final => final.tilt);
         }, params);
         assert.equal(Math.round(result), params.tilt);
     });
@@ -82,7 +82,7 @@ describe('Camera utils with globe example', function _() {
                 view,
                 camera,
                 p,
-            ).then((final) => final.heading);
+            ).then(final => final.heading);
         }, params);
         assert.equal(Math.round(result), params.heading);
     });
@@ -102,7 +102,7 @@ describe('Camera utils with globe example', function _() {
                 view,
                 camera,
                 params,
-            ).then((final) => ({ params, final }));
+            ).then(final => ({ params, final }));
         });
         assert.equal(Math.round(result.final.heading), result.params.heading);
         assert.equal(Math.round(result.final.tilt), result.params.tilt);
@@ -130,7 +130,7 @@ describe('Camera utils with globe example', function _() {
                 view,
                 camera,
                 params,
-            ).then((final) => ({ final, params }));
+            ).then(final => ({ final, params }));
         });
         assert.equal(Math.round(result.final.heading), result.params.heading);
         assert.equal(Math.round(result.final.tilt), result.params.tilt);
