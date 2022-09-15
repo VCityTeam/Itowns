@@ -8,8 +8,8 @@
 function fillHTMLWithPickingInfo(event, pickingArg) {
     if (!pickingArg.layer.isC3DTilesLayer) {
         console.warn(
-            'Function fillHTMLWithPickingInfo only works' +
-                ' for C3DTilesLayer layers.',
+            "Function fillHTMLWithPickingInfo only works" +
+                " for C3DTilesLayer layers."
         );
         return;
     }
@@ -32,10 +32,10 @@ function fillHTMLWithPickingInfo(event, pickingArg) {
     if (featureDisplayableInfo) {
         // eslint-disable-next-line
         pickingArg.htmlDiv.appendChild(
-            createHTMLListFromObject(featureDisplayableInfo),
+            createHTMLListFromObject(featureDisplayableInfo)
         );
         featureDisplayableInfo.tile = getTileFromObjectIntersected(
-            intersects[0].object,
+            intersects[0].object
         );
         return featureDisplayableInfo;
     }
@@ -48,16 +48,16 @@ function fillHTMLWithPickingInfo(event, pickingArg) {
  */
 function getTileFromObjectIntersected(object) {
     if (!object) {
-        throw 'Tile not loaded in view';
+        throw "Tile not loaded in view";
     }
 
     //Find the 'Object3D' part of the tile
-    while (!!object.parent && !(object.type === 'Object3D')) {
+    while (!!object.parent && !(object.type === "Object3D")) {
         object = object.parent;
     }
 
     if (!object.batchTable) {
-        throw 'Invalid tile : no batch table';
+        throw "Invalid tile : no batch table";
     }
 
     return object;
