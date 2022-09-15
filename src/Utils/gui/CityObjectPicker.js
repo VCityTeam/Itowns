@@ -68,14 +68,14 @@ class CityObjectPicker extends Widget {
     }
 
     /**
- * "Compare two position and rotation of the camera and return true if they are the same."
- *
- * The first thing we do is round the position values to the nearest integer. This is because the
- * position values are floats, and we want to compare them as integers
- * @param {Object} posRot1 - The first position and rotation.
- * @param {Object} posRot2 - The second position and rotation.
- * @returns {Boolean} A boolean value.
- */
+     * "Compare two position and rotation of the camera and return true if they are the same."
+     *
+     * The first thing we do is round the position values to the nearest integer. This is because the
+     * position values are floats, and we want to compare them as integers
+     * @param {Object} posRot1 - The first position and rotation.
+     * @param {Object} posRot2 - The second position and rotation.
+     * @returns {Boolean} A boolean value.
+     */
     comparePosRot(posRot1, posRot2) {
         [posRot1, posRot2].forEach((posRot) => {
             posRot.position.x = Math.floor(posRot.position.x);
@@ -90,10 +90,10 @@ class CityObjectPicker extends Widget {
     }
 
     /**
- * If the mouse button is pressed and the camera hasn't moved, then get the city object that was
- * clicked on and update the selection info
- * @param {MouseEvent} event - the event object
- */
+     * If the mouse button is pressed and the camera hasn't moved, then get the city object that was
+     * clicked on and update the selection info
+     * @param {MouseEvent} event - the event object
+     */
     pick(event) {
         if (
             event.button != 0 ||
@@ -125,11 +125,11 @@ class CityObjectPicker extends Widget {
     }
 
     /**
- * It gets the first intersection of the mouse with a tile, and returns the tile, the layer, and the
- * batch info
- * @param {MouseEvent} event - The event object from the mouse event.
- * @returns {Object} An object with the tile, layer, and batchInfo.
- */
+     * It gets the first intersection of the mouse with a tile, and returns the tile, the layer, and the
+     * batch info
+     * @param {MouseEvent} event - The event object from the mouse event.
+     * @returns {Object} An object with the tile, layer, and batchInfo.
+     */
     getInfoFromCityObject(event) {
         const info = {};
         const intersects = this.view.pickObjectsAt(event, 5, ...this.layerIDs);
@@ -149,9 +149,9 @@ class CityObjectPicker extends Widget {
     }
 
     /**
- * It creates a section element, adds a title and a list element to it, and then adds the section to
- * the main DOM element
- */
+     * It creates a section element, adds a title and a list element to it, and then adds the section to
+     * the main DOM element
+     */
     initUI() {
         const selectionSection = document.createElement('section');
 
