@@ -12,7 +12,7 @@ const DEFAULT_OPTIONS = {
 };
 
 /**
- * example path : "/examples/widgets_camera_positioner.html"
+ * example path : "/examples/widgets_layer_choice.html"
  *
  * @extends Widget
  *
@@ -22,7 +22,7 @@ class LayerChoice extends Widget {
     /**
      * It creates a widget that displays the camera's position and rotation, and allows the user to
      * change them
-     * @param {View} view - The view to which the camera-positioner is linked. Only work with {@link PlanarView}
+     * @param {View} view - The view to which the layer-choice is linked. Only work with {@link PlanarView}
      * @param {Object} [options] - An object containing the options of the widget.
      */
     constructor(view, options = {}) {
@@ -30,237 +30,170 @@ class LayerChoice extends Widget {
 
         super(view, options, DEFAULT_OPTIONS);
 
-        // ---------- this.domElement SETTINGS SPECIFIC TO camera-positioner : ----------
+        // ---------- this.domElement SETTINGS SPECIFIC TO layer-choice : ----------
 
-        this.domElement.id = 'widgets-camera-positioner';
+        this.domElement.id = 'widgets-layer-choice';
 
         this.view = view;
 
-        // Initialize the text content of the camera-positioner, which will later be updated by a numerical value.
-        this.domElement.innerHTML = 'Camera Positioner';
-
-        /* Creating a vector of inputs for the camera position. */
-        const coordinatesInputElement = this.createInputVector(
-            ['x', 'y', 'z'],
-            'camera_coordinates ►',
-            100,
-        );
-        coordinatesInputElement.fold = true;
-        /* A function that is called when the title of the input vector is clicked. It changes the title of the input vector and the display of the input vector. */
-        coordinatesInputElement.title.onclick = () => {
-            this.innerHTML = coordinatesInputElement.fold
-                ? 'camera_coordinates ▼'
-                : 'camera_coordinates ►';
-            coordinatesInputElement.inputVector.style.display =
-                coordinatesInputElement.fold ? 'grid' : 'none';
-            coordinatesInputElement.fold = !coordinatesInputElement.fold;
-        };
-        this.domElement.appendChild(coordinatesInputElement.title);
-        this.domElement.appendChild(coordinatesInputElement.inputVector);
-        this.coordinatesInputElement = coordinatesInputElement;
-        /* Setting the camera position to the camera positioner. */
-        this.setCoordinatesInputs(view.camera.camera3D.position);
-
-        /* Creating a vector of inputs for the camera position. */
-        const rotationInputElement = this.createInputVector(
-            ['x', 'y', 'z'],
-            'camera_rotation ►',
-            100,
-        );
-        rotationInputElement.fold = true;
-        /* A function that is called when the title of the input vector is clicked. It changes the title of the input vector and the display of the input vector. */
-        rotationInputElement.title.onclick = () => {
-            this.innerHTML = rotationInputElement.fold
-                ? 'camera_rotation ▼'
-                : 'camera_rotation ►';
-            rotationInputElement.inputVector.style.display =
-                rotationInputElement.fold ? 'grid' : 'none';
-            rotationInputElement.fold = !rotationInputElement.fold;
-        };
-        this.domElement.appendChild(rotationInputElement.title);
-        this.domElement.appendChild(rotationInputElement.inputVector);
-        this.rotationInputElement = rotationInputElement;
-        /* Setting the rotation inputs to the camera's rotation. */
-        this.setRotationInputs(view.camera.camera3D.rotation);
-
-        const travelButton = document.createElement('button');
-        travelButton.innerHTML = 'TRAVEL';
-        const _this = this;
-        travelButton.onclick = () => {
-            const newCameraCoordinates = _this.inputVectorToVector(
-                coordinatesInputElement.inputVector,
-            );
-            const newCameraRotation = _this.inputVectorToVector(
-                rotationInputElement.inputVector,
-            );
-            const newCameraQuaternion = new THREE.Quaternion();
-            newCameraQuaternion.setFromEuler(
-                new THREE.Euler(
-                    newCameraRotation.x,
-                    newCameraRotation.y,
-                    newCameraRotation.z,
-                ),
-                'XYZ',
-            );
-            view.controls.initiateTravel(
-                newCameraCoordinates,
-                'auto',
-                newCameraQuaternion,
-                true,
-            );
-        };
-        this.domElement.appendChild(travelButton);
+        // Initialize the text content of the layer-choice, which will later be updated by a numerical value.
+        this.domElement.innerHTML = 'Layer Choice';
 
         this.width = options.width || DEFAULT_OPTIONS.width;
+        this.height = options.height || DEFAULT_OPTIONS.height;
 
-        if (this.view.isGlobeView) {
-            this.view.addEventListener(
-                GLOBE_VIEW_EVENTS.GLOBE_INITIALIZED,
-                () => {
-                    this.update();
-                },
-            );
-            this.view.controls.addEventListener(
-                CONTROL_EVENTS.RANGE_CHANGED,
-                () => {
-                    this.update();
-                },
-            );
-        } else if (this.view.isPlanarView) {
-            this.view.addEventListener(VIEW_EVENTS.INITIALIZED, () => {
-                this.update();
-            });
-            this.view.addEventListener(PLANAR_CONTROL_EVENT.MOVED, () => {
-                this.update();
-            });
-        } else {
-            console.warn(
-                "The 'view' linked to camera-positioner widget is neither a 'GlobeView' nor a 'PlanarView'. The " +
-                    "camera-positioner wont automatically update. You can implement its update automation using 'camera-positioner.update' " +
-                    'method.',
-            );
-        }
+        this.domElement.appendChild(this.initContentColorLayers());
+        this.domElement.appendChild(this.initContentElevationLayers());
+        this.domElement.appendChild(this.initContentGeometryLayers());
     }
 
-    /**
-     * Update the camera-positioner inputs elements.
-     */
-    update() {
-        this.setCoordinatesInputs(this.view.camera.camera3D.position);
-        this.setRotationInputs(this.view.camera.camera3D.rotation);
+    // Create the description part of ColorLayers
+    initContentColorLayers() {
+        const html = document.createElement('div');
+        const titleColorLayers = document.createElement('h3');
+        titleColorLayers.innerHTML = 'Color Layers : ';
+        html.appendChild(titleColorLayers);
+
+        const list = document.createElement('div');
+
+        const layers = this.view.getLayers(layer => layer.isColorLayer);
+        for (let i = 0; i < layers.length; i++) {
+            const layer = layers[i];
+            const divLayer = document.createElement('div');
+            divLayer.innerHTML = layer.id;
+
+            const labelVisible = document.createElement('label');
+            labelVisible.innerHTML = ' Visible : ';
+            divLayer.appendChild(labelVisible);
+            const inputVisibleCheckbox = document.createElement('input');
+            inputVisibleCheckbox.type = 'checkbox';
+            inputVisibleCheckbox.checked = layer.visible;
+            divLayer.appendChild(inputVisibleCheckbox);
+
+            const labelInputOpactity = document.createElement('label');
+            labelInputOpactity.innerHTML = ' Opacity : ';
+            divLayer.appendChild(labelInputOpactity);
+            const inputOpacity = document.createElement('input');
+            inputOpacity.type = 'number';
+            inputOpacity.id = `opacity_${i}`;
+            inputOpacity.min = 0;
+            inputOpacity.max = 1;
+            inputOpacity.step = 0.05;
+            inputOpacity.value = layer.opacity;
+            divLayer.appendChild(inputOpacity);
+
+
+            inputVisibleCheckbox.onchange = (event) => {
+                layer.visible = event.target.checked;
+                this.view.notifyChange();
+            };
+
+            inputOpacity.oninput = (event) => {
+                layer.opacity = event.target.valueAsNumber;
+                this.view.notifyChange();
+            };
+
+            list.appendChild(divLayer);
+        }
+        html.appendChild(list);
+
+        return html;
     }
 
-    /**
-     * @param {Array.String} labels List of labels name
-     * @param {String} vectorName Name of the vector
-     * @param {number} step The step of HTMLElement input (type number)
-     * @returns {Object} title => HTMLElement 'h3' ; inputVector => HTMLElement 'div' contains labels and inputs HTMLElements
-     */
-    createInputVector(labels, vectorName, step = 0.5) {
-        const titleVector = document.createElement('h3');
-        titleVector.innerHTML = vectorName;
+    // Create the description part of ElevationLayers
+    initContentElevationLayers() {
+        const html = document.createElement('div');
+        const titleElevationLayers = document.createElement('h3');
+        titleElevationLayers.innerHTML = 'Elevation Layers : ';
+        html.appendChild(titleElevationLayers);
 
-        const inputVector = document.createElement('div');
-        inputVector.id = `${vectorName}_inputVector`;
-        inputVector.classList.add('widgets-camera-positioner-inputvector');
-        for (let iInput = 0; iInput < labels.length; iInput++) {
-            const labelElement = document.createElement('label');
-            labelElement.innerHTML = labels[iInput];
+        const list = document.createElement('div');
+        const layers = this.view.getLayers(layer => layer.isElevationLayer);
+        for (let i = 0; i < layers.length; i++) {
+            const layer = layers[i];
+            const divLayer = document.createElement('div');
 
-            const componentElement = document.createElement('input');
-            componentElement.id = `${vectorName}_${labelElement.innerHTML}`;
-            componentElement.type = 'number';
-            componentElement.setAttribute('value', '0');
-            componentElement.step = step;
+            divLayer.innerHTML = layer.id;
 
-            labelElement.htmlFor = componentElement.id;
+            const labelScale = document.createElement('label');
+            labelScale.innerHTML = ' Scale : ';
+            divLayer.appendChild(labelScale);
+            const spanScale = document.createElement('span');
+            spanScale.innerHTML = layer.scale;
+            labelScale.appendChild(spanScale);
 
-            inputVector.appendChild(labelElement);
-            inputVector.appendChild(componentElement);
+            const inputScale = document.createElement('input');
+            inputScale.type = 'number';
+            inputScale.min = 0;
+            inputScale.max = 10;
+            inputScale.step = 0.1;
+            inputScale.value = layer.scale;
+            divLayer.appendChild(inputScale);
+
+            inputScale.oninput = (event) => {
+                layer.scale = event.target.valueAsNumber;
+                this.view.notifyChange();
+                spanScale.innerHTML = layer.scale;
+            };
+            list.appendChild(divLayer);
         }
-        return {
-            title: titleVector,
-            inputVector,
+        html.appendChild(list);
+
+        return html;
+    }
+
+    // Create the description part of GeometryLayers
+    initContentGeometryLayers() {
+        const html = document.createElement('div');
+        const titleGeometryLayers = document.createElement('h3');
+        titleGeometryLayers.innerHTML = 'Geometry Layers : ';
+        html.appendChild(titleGeometryLayers);
+
+        const divCheckAll = document.createElement('div');
+        const labelCheckAll = document.createElement('label');
+        labelCheckAll.innerHTML = 'Check All : ';
+        divCheckAll.appendChild(labelCheckAll);
+        const inputCheckAllButton = document.createElement('input');
+        inputCheckAllButton.type = 'button';
+        inputCheckAllButton.value = 'Check/Uncheck All';
+        divCheckAll.appendChild(inputCheckAllButton);
+        html.appendChild(divCheckAll);
+
+        const layers = this.view.getLayers(layer => layer.isGeometryLayer);
+        const list = document.createElement('div');
+        for (let i = 0; i < layers.length; i++) {
+            const layer = layers[i];
+
+            const divLayer = document.createElement('div');
+            divLayer.innerHTML = layer.id;
+
+            const divLayerVisibility = document.createElement('span');
+            const inputLayerVisibilityCheckbox = document.createElement('input');
+            inputLayerVisibilityCheckbox.type = 'checkbox';
+            inputLayerVisibilityCheckbox.checked = layer.visible;
+
+            inputLayerVisibilityCheckbox.onclick = (event) => {
+                layer.visible = event.target.checked;
+                this.view.notifyChange();
+            };
+
+            divLayerVisibility.appendChild(inputLayerVisibilityCheckbox);
+            divLayer.appendChild(divLayerVisibility);
+            list.appendChild(divLayer);
+        }
+
+        let toggle = false;
+        inputCheckAllButton.onclick = () => {
+            for (const inputCheckbox of list.getElementsByTagName('input')) {
+                inputCheckbox.checked = toggle;
+                inputCheckbox.dispatchEvent(new Event('click'));
+            }
+            toggle = !toggle;
         };
-    }
 
-    /**
-     * It takes a vector input element and returns a vector object
-     * @param {HTMLElement} inputVector  - The HTML element that contains the input elements.
-     * @returns {THREE.Vector} A vector of the values of the input elements.
-     */
-    inputVectorToVector(inputVector) {
-        const inputEls = inputVector.getElementsByTagName('input');
+        html.appendChild(list);
 
-        const countEls = inputEls.length;
-
-        switch (countEls) {
-            case 2:
-                return new THREE.Vector2(inputEls[0].value, inputEls[1].value);
-            case 3:
-                return new THREE.Vector3(
-                    inputEls[0].value,
-                    inputEls[1].value,
-                    inputEls[2].value,
-                );
-            case 4:
-                return new THREE.Vector4(
-                    inputEls[0].value,
-                    inputEls[1].value,
-                    inputEls[2].value,
-                    inputEls[3].value,
-                );
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * It takes a vector3, and sets the values of the input elements to the values of the vector
-     * @param {THREE.Vector3}  vec3 - The vector3 object that contains the x, y, and z coordinates inputs to.
-     */
-    setCoordinatesInputs(vec3) {
-        const coordinatesInputEls =
-            this.coordinatesInputElement.inputVector.getElementsByTagName(
-                'input',
-            );
-
-        if (vec3.x !== null) {
-            const element0 = coordinatesInputEls[0];
-            element0.value = Math.round(vec3.x);
-        }
-        if (vec3.y !== null) {
-            const element1 = coordinatesInputEls[1];
-            element1.value = Math.round(vec3.y);
-        }
-
-        if (vec3.z !== null) {
-            const element2 = coordinatesInputEls[2];
-            element2.value = Math.round(vec3.z);
-        }
-    }
-
-    /**
-     * It takes a vector3, and sets the rotation input elements to the values of the vector3 object
-     * @param {THREE.Vector3} vec3 - The vector3 object that contains the x, y, and z values that you want to set the
-     * rotation inputs to.
-     */
-    setRotationInputs(vec3) {
-        const rotationInputEls =
-            this.rotationInputElement.inputVector.getElementsByTagName('input');
-
-        if (vec3.x !== null) {
-            const element0 = rotationInputEls[0];
-            element0.value = Math.round(vec3.x * 1000) / 1000;
-        }
-        if (vec3.y !== null) {
-            const element1 = rotationInputEls[1];
-            element1.value = Math.round(vec3.y * 1000) / 1000;
-        }
-        if (vec3.z !== null) {
-            const element2 = rotationInputEls[2];
-            element2.value = Math.round(vec3.z * 1000) / 1000;
-        }
+        return html;
     }
 }
 
