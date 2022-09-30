@@ -153,10 +153,11 @@ class LayerChoice extends Widget {
         const labelCheckAll = document.createElement('label');
         labelCheckAll.innerHTML = 'Check All : ';
         divCheckAll.appendChild(labelCheckAll);
-        const inputCheckAllButton = document.createElement('input');
-        inputCheckAllButton.type = 'button';
-        inputCheckAllButton.value = 'Check/Uncheck All';
-        divCheckAll.appendChild(inputCheckAllButton);
+
+        const inputCheckAllCheckbox = document.createElement('input');
+        inputCheckAllCheckbox.type = 'checkbox';
+        inputCheckAllCheckbox.checked = true;
+        divCheckAll.appendChild(inputCheckAllCheckbox);
         html.appendChild(divCheckAll);
 
         const layers = this.view.getLayers(layer => layer.isGeometryLayer);
@@ -182,13 +183,11 @@ class LayerChoice extends Widget {
             list.appendChild(divLayer);
         }
 
-        let toggle = false;
-        inputCheckAllButton.onclick = () => {
+        inputCheckAllCheckbox.onclick = (event) => {
             for (const inputCheckbox of list.getElementsByTagName('input')) {
-                inputCheckbox.checked = toggle;
+                inputCheckbox.checked = event.target.checked;
                 inputCheckbox.dispatchEvent(new Event('click'));
             }
-            toggle = !toggle;
         };
 
         html.appendChild(list);
