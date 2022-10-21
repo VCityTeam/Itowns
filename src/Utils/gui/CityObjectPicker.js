@@ -1,7 +1,7 @@
 import CameraUtils from 'Utils/CameraUtils';
 import Widget from './Widget';
 
-import { getTileFromObjectIntersected } from '../../../examples/js/3dTilesHelper';
+import { getFirstIntersection } from '../Picking3DTilesUtils';
 import Coordinates from '../../Core/Geographic/Coordinates';
 
 const DEFAULT_OPTIONS = {
@@ -33,13 +33,13 @@ class CityObjectPicker extends Widget {
         // ---------- this.domElement SETTINGS SPECIFIC TO city-object-picker : ----------
 
         this.domElement.id = 'widgets-city-object-picker';
-        this.selectionInfo = null;
 
         this.view = view;
 
         this.layerIDs = layerIDs;
         this.rangeFocus = config.rangeFocus || 200;
         this.tiltFocus = config.tiltFocus || 60;
+        this.refreshUI = config.refreshUI || this.refreshUI;
 
         this.coSelected = null;
         this.savedCameraPosRot = null;
@@ -50,9 +50,13 @@ class CityObjectPicker extends Widget {
         window.addEventListener('mousedown', () => {
             this.saveCameraPosRot();
         });
-        window.addEventListener('mouseup', this.pick.bind(this));
 
-        this.initUI();
+        window.addEventListener('mouseup', (event) => {
+            this.pickCityObject(event);
+            this.refreshUI();
+        });
+
+        this.refreshUI();
         this.width = options.width || DEFAULT_OPTIONS.width;
     }
 
@@ -94,34 +98,37 @@ class CityObjectPicker extends Widget {
      * clicked on and update the selection info
      * @param {MouseEvent} event - the event object
      */
-    pick(event) {
+    pickCityObject(event) {
         if (
             event.button != 0 ||
             !this.comparePosRot(this.savedCameraPosRot, this.getCameraPosRot())
         ) {
             return;
         }
-        const info = this.getInfoFromCityObject(event);
 
+        // reset the selected city object
+        if (this.getCityObjectSelected()) {
+            this.getCityObjectSelected().setIndexMaterial(0); // set the material to the default one
+        }
+
+        this.setInfo(this.createInfoObjectFromIntersectObject(event));
+
+        const info = this.getInfo();
         if (!info) {
             return;
         }
 
-        // reset the selected city object
-        if (this.coSelected) {
-            this.coSelected.setIndexMaterial(0); // set the material to the default one
-        }
         // set the selected city object
         if (info && info.tile) {
             const coManager = info.tile.cityObjectManager;
-            this.coSelected = coManager.cityObjects[info.batchInfo.batchID];
-            this.coSelected.setIndexMaterial(1); // set the material to the selected one
+            this.setCityObjectSelected(
+                coManager.cityObjects[info.batchInfo.batchID],
+            );
+            this.getCityObjectSelected().setIndexMaterial(1); // set the material to the selected one
         } else {
-            this.coSelected = null;
+            this.setCityObjectSelected(null);
         }
         this.view.notifyChange();
-
-        this.updateSelectionInfo(info);
     }
 
     /**
@@ -130,16 +137,24 @@ class CityObjectPicker extends Widget {
      * @param {MouseEvent} event - The event object from the mouse event.
      * @returns {Object} An object with the tile, layer, and batchInfo.
      */
-    getInfoFromCityObject(event) {
+    createInfoObjectFromIntersectObject(event) {
         const info = {};
-        const intersects = this.view.pickObjectsAt(event, 5, ...this.layerIDs);
+        // Get the intersecting objects where our mouse pointer is
+        let intersects = [];
+        // As the current pickObjectsAt on all layer is not working, we need
+        // to call pickObjectsAt() for each layer.
+        for (let i = 0; i < this.layerIDs.length; i++) {
+            intersects = intersects.concat(
+                this.view.pickObjectsAt(event, 5, this.layerIDs[i]),
+            );
+        }
         if (intersects.length > 0) {
-            const firstIntersect = getFirstIntersection(intersects);
-            if (firstIntersect != null) {
-                info.tile = getTileFromObjectIntersected(firstIntersect.object);
+            const { firstInteraction, tile } = getFirstIntersection(intersects);
+            if (firstInteraction != null) {
+                info.tile = tile;
                 info.layer = info.tile.layer;
                 info.batchInfo = info.layer.getInfoFromIntersectObject([
-                    firstIntersect,
+                    firstInteraction,
                 ]);
 
                 return info;
@@ -149,90 +164,118 @@ class CityObjectPicker extends Widget {
     }
 
     /**
-     * It creates a section element, adds a title and a list element to it, and then adds the section to
-     * the main DOM element
+     * It creates / refresh the UI of the city-object-picker.
      */
-    initUI() {
+    refreshUI() {
+        /* Creating a section, a title, and a list. */
+        this.domElement.innerHTML = '';
         const selectionSection = document.createElement('section');
 
         const selectionTitle = document.createElement('h3');
         selectionTitle.innerHTML = 'Selected city object : ';
 
         const selectionInfo = document.createElement('ul');
-        this.selectionInfo = selectionInfo;
 
         selectionSection.appendChild(selectionTitle);
         selectionSection.appendChild(selectionInfo);
         this.domElement.appendChild(selectionSection);
 
-        this.updateSelectionInfo(null);
-    }
-
-    /* Updating the selection info. */
-    updateSelectionInfo(info) {
+        const info = this.getInfo();
         if (info) {
             const { layer, batchInfo, tile } = info;
-
-            this.selectionInfo.innerHTML = '';
-
             const color = layer.secondaryMaterials[0].color;
-            this.selectionInfo.style.backgroundColor = `rgba(${
-                color.r * 255
-            }, ${color.g * 255}, ${color.b * 255}, ${0.15})`;
+            selectionInfo.style.backgroundColor = `rgba(${color.r * 255}, ${
+                color.g * 255
+            }, ${color.b * 255}, ${0.15})`;
 
             const tileIDLi = document.createElement('li');
             tileIDLi.innerHTML = `Tile ID : ${tile.id}`;
-            this.selectionInfo.appendChild(tileIDLi);
+            selectionInfo.appendChild(tileIDLi);
 
             const batchIDLi = document.createElement('li');
             batchIDLi.innerHTML = `Batch ID : ${batchInfo.batchID}`;
-            this.selectionInfo.appendChild(batchIDLi);
+            selectionInfo.appendChild(batchIDLi);
 
             const layerIDLi = document.createElement('li');
             layerIDLi.innerHTML = `Layer ID : ${layer.id}`;
-            this.selectionInfo.appendChild(layerIDLi);
+            selectionInfo.appendChild(layerIDLi);
 
             for (const keys of Object.keys(batchInfo.batchTable)) {
                 const li = document.createElement('li');
                 li.innerHTML = `BatchTable ${keys} : ${batchInfo.batchTable[keys]}`;
-                this.selectionInfo.appendChild(li);
+                selectionInfo.appendChild(li);
             }
 
-            const focusButton = document.createElement('button');
-            focusButton.innerHTML = 'Focus';
-            const _this = this;
-            focusButton.addEventListener('click', () => {
-                if (!_this.coSelected) {
-                    return;
-                }
-
-                const view = _this.view;
-                const camera = view.camera.camera3D;
-                const co = _this.coSelected;
-                // const cameraTransformOptions =
-                //     CameraUtils.getTransformCameraLookingAtTarget(
-                //         view,
-                //         camera,
-                //         co.centroid.clone(),
-                //     );
-                const coord = new Coordinates(
-                    view.referenceCrs,
-                    co.centroid.clone(),
-                );
-
-                const params = {
-                    coord,
-                    range: _this.rangeFocus,
-                    tilt: _this.tiltFocus,
-                };
-
-                CameraUtils.animateCameraToLookAtTarget(view, camera, params);
-            });
-            this.selectionInfo.appendChild(focusButton);
+            const focusButton = this.createFocusButton();
+            selectionInfo.appendChild(focusButton);
         } else {
-            this.selectionInfo.innerHTML = 'No city object selected';
-            this.selectionInfo.style.backgroundColor = '';
+            selectionInfo.innerHTML = 'No city object selected';
+            selectionInfo.style.backgroundColor = '';
         }
+    }
+
+    /**
+     * It creates a button that, when clicked, will animate the camera to look at the selected city object
+     * @returns {HTMLButtonElement} A button element with the text "Focus"
+     */
+    createFocusButton() {
+        const focusButton = document.createElement('button');
+        focusButton.innerHTML = 'Focus';
+        const _this = this;
+        focusButton.addEventListener('click', () => {
+            if (!_this.getCityObjectSelected()) {
+                return;
+            }
+
+            const view = _this.view;
+            const camera = view.camera.camera3D;
+            const co = _this.getCityObjectSelected();
+            const coord = new Coordinates(
+                view.referenceCrs,
+                co.centroid.clone(),
+            );
+
+            const params = {
+                coord,
+                range: _this.rangeFocus,
+                tilt: _this.tiltFocus,
+            };
+
+            CameraUtils.animateCameraToLookAtTarget(view, camera, params);
+        });
+        return focusButton;
+    }
+
+    /**
+     * This function sets the selected city object to the one passed in
+     * @param {C3DTCityObject | null} co - The city object that was selected.
+     */
+    setCityObjectSelected(co) {
+        this.coSelected = co;
+    }
+
+    /**
+     * It returns the value of the variable `coSelected`
+     * @returns {C3DTCityObject | null} The city object selected.
+     */
+    getCityObjectSelected() {
+        return this.coSelected;
+    }
+
+    /**
+     * This function sets the info property of the object to the value of the info parameter.
+     * @param {Object | null} info - The info object that is passed to the constructor of the class.
+     */
+    setInfo(info) {
+        this.info = info;
+    }
+
+    /**
+     * It returns the value of the `info` property of the object that called it
+     * @returns {Object | null} The info property of the object.
+     */
+    getInfo() {
+        return this.info;
     }
 }
 

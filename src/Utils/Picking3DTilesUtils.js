@@ -31,10 +31,10 @@ function getFirstIntersection(intersects) {
     for (const inter of intersects) {
         const tile = getTileFromObjectIntersected(inter.object);
         if (inter.object.visible && tile.visible && tile.content.visible) {
-            return inter;
+            return { firstInteraction: inter, tile };
         }
     }
-    return null;
+    return { firstInteraction: null, tile: null };
 }
 
 export { getTileFromObjectIntersected, getFirstIntersection };
