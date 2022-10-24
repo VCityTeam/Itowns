@@ -1,9 +1,7 @@
-import { CONTROL_EVENTS } from 'Controls/GlobeControls';
-import { GLOBE_VIEW_EVENTS } from 'Core/Prefab/GlobeView';
-import { PLANAR_CONTROL_EVENT } from 'Controls/PlanarControls';
-import { VIEW_EVENTS } from 'Core/View';
-import * as THREE from 'three';
+import CameraUtils from 'Utils/CameraUtils';
 import Widget from './Widget';
+
+import Coordinates from '../../Core/Geographic/Coordinates';
 
 const DEFAULT_OPTIONS = {
     width: 200,
@@ -20,12 +18,13 @@ const DEFAULT_OPTIONS = {
  */
 class LayerChoice extends Widget {
     /**
-     * It creates a widget that displays the camera's position and rotation, and allows the user to
-     * change them
-     * @param {View} view - The view to which the layer-choice is linked. Only work with {@link PlanarView}
-     * @param {Object} [options] - An object containing the options of the widget.
+     * It creates a new layer-choice widget, which is a div element that contains a list of color layers,
+     * elevation layers, and geometry layers
+     * @param {View} view - the view object of the scene
+     * @param {Object} [config] - an object containing the configuration of the widget.
+     * @param {Object} [options] - the options object passed in the constructor.
      */
-    constructor(view, options = {}) {
+    constructor(view, config = {}, options = {}) {
         // ---------- BUILD PROPERTIES ACCORDING TO DEFAULT OPTIONS AND OPTIONS PASSED IN PARAMETERS : ----------
 
         super(view, options, DEFAULT_OPTIONS);
@@ -38,6 +37,9 @@ class LayerChoice extends Widget {
 
         // Initialize the text content of the layer-choice, which will later be updated by a numerical value.
         this.domElement.innerHTML = 'Layer Choice';
+
+        this.rangeFocus = config.rangeFocus || null;
+        this.tiltFocus = config.tiltFocus || 60;
 
         this.width = options.width || DEFAULT_OPTIONS.width;
         this.height = options.height || DEFAULT_OPTIONS.height;
@@ -81,7 +83,6 @@ class LayerChoice extends Widget {
             inputOpacity.step = 0.05;
             inputOpacity.value = layer.opacity;
             divLayer.appendChild(inputOpacity);
-
 
             inputVisibleCheckbox.onchange = (event) => {
                 layer.visible = event.target.checked;
@@ -169,7 +170,8 @@ class LayerChoice extends Widget {
             divLayer.innerHTML = layer.id;
 
             const divLayerVisibility = document.createElement('span');
-            const inputLayerVisibilityCheckbox = document.createElement('input');
+            const inputLayerVisibilityCheckbox =
+                document.createElement('input');
             inputLayerVisibilityCheckbox.type = 'checkbox';
             inputLayerVisibilityCheckbox.checked = layer.visible;
 
@@ -178,7 +180,10 @@ class LayerChoice extends Widget {
                 this.view.notifyChange();
             };
 
+            const focusButton = this.createFocusButton(layer);
+
             divLayerVisibility.appendChild(inputLayerVisibilityCheckbox);
+            divLayerVisibility.appendChild(focusButton);
             divLayer.appendChild(divLayerVisibility);
             list.appendChild(divLayer);
         }
@@ -193,6 +198,32 @@ class LayerChoice extends Widget {
         html.appendChild(list);
 
         return html;
+    }
+
+    createFocusButton(layer) {
+        const focusButton = document.createElement('button');
+        focusButton.innerHTML = 'Focus';
+        const _this = this;
+        focusButton.addEventListener('click', () => {
+            const view = _this.view;
+            const camera = view.camera.camera3D;
+
+            const coord = new Coordinates(
+                view.referenceCrs,
+                layer.extent.center(),
+            );
+
+            const range = _this.rangeFocus || Math.max(Math.abs(layer.extent.west - layer.extent.east), Math.abs(layer.extent.north - layer.extent.south));
+
+            const params = {
+                coord,
+                range,
+                tilt: _this.tiltFocus,
+            };
+
+            CameraUtils.animateCameraToLookAtTarget(view, camera, params);
+        });
+        return focusButton;
     }
 }
 
