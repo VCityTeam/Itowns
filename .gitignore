@@ -12,4 +12,3 @@ potree
 coverage
 .nyc_output/
 /src/ThreeExtended/
-.vscode/settings.json
