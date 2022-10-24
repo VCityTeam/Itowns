@@ -43,7 +43,13 @@ class LayerChoice extends Widget {
 
         this.width = options.width || DEFAULT_OPTIONS.width;
         this.height = options.height || DEFAULT_OPTIONS.height;
+        this.updateUI();
+    }
 
+    /**
+    * This function creates the UI for the widget
+    */
+    updateUI() {
         this.domElement.appendChild(this.initContentColorLayers());
         this.domElement.appendChild(this.initContentElevationLayers());
         this.domElement.appendChild(this.initContentGeometryLayers());
@@ -200,6 +206,12 @@ class LayerChoice extends Widget {
         return html;
     }
 
+    /**
+     * It creates a button that, when clicked, will animate the camera to look at the center of the layer's
+     * extent
+     * @param {Layer} layer - the layer to focus on
+     * @returns {HTMLButtonElement} A button that will focus the camera on the layer.
+     */
     createFocusButton(layer) {
         const focusButton = document.createElement('button');
         focusButton.innerHTML = 'Focus';
@@ -213,7 +225,12 @@ class LayerChoice extends Widget {
                 layer.extent.center(),
             );
 
-            const range = _this.rangeFocus || Math.max(Math.abs(layer.extent.west - layer.extent.east), Math.abs(layer.extent.north - layer.extent.south));
+            const range =
+                _this.rangeFocus ||
+                Math.max(
+                    Math.abs(layer.extent.west - layer.extent.east),
+                    Math.abs(layer.extent.north - layer.extent.south),
+                );
 
             const params = {
                 coord,
