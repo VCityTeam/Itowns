@@ -129,7 +129,27 @@
                 view,
             );
 
+            // Create the 3D Tiles layer
+            var $3DTilesLayerLyon6 = new itowns.C3DTilesLayer(
+                '3d-tiles-lyon6',
+                {
+                    name: 'BTHierarchy',
+                    source: new itowns.C3DTilesSource({
+                        url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-6_2015/tileset.json',
+                    }),
+                    cityObjectConf: {
+                        secondaryMaterials: [
+                            new itowns.THREE.MeshStandardMaterial({
+                                color: 0x42ff00,
+                            }),
+                        ],
+                    },
+                },
+                view,
+            );
+
             itowns.View.prototype.addLayer.call(view, $3DTilesLayerLyon);
+            itowns.View.prototype.addLayer.call(view, $3DTilesLayerLyon6);
 
             // Add lights in the scene
             var dirLight = new itowns.THREE.DirectionalLight(0xffffff, 1);
@@ -142,7 +162,7 @@
 
             // ---------- ADD CITY OBJECT PICKER WIDGET : ----------
             const cityObjectPicker = new itowns_widgets.CityObjectPicker(view, [
-                $3DTilesLayerLyon.id,
+                $3DTilesLayerLyon.id,$3DTilesLayerLyon6.id
             ]);
 
             // ---------- DEBUG TOOLS : ----------

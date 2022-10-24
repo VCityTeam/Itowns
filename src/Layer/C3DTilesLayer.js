@@ -64,7 +64,7 @@ class C3DTilesLayer extends GeometryLayer {
         this.sseThreshold = config.sseThreshold || 16;
         this.cleanupDelay = config.cleanupDelay || 1000;
         this.generateCityObjectsFlag = !!config.cityObjectConf;
-        this.secondaryMaterials = config.cityObjectConf.secondaryMaterials;
+        this.secondaryMaterials = null;
 
         this.onTileContentLoaded = (tile) => {
             if (config.onTileContentLoaded) {
@@ -73,6 +73,7 @@ class C3DTilesLayer extends GeometryLayer {
 
             /* A flag (boolean) to generate city objects. */
             if (this.generateCityObjectsFlag) {
+                this.secondaryMaterials = config.cityObjectConf.secondaryMaterials;
                 this.generateCityObjects.call(this, tile);
             }
         };
