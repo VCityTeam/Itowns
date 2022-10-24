@@ -117,14 +117,7 @@
                     name: 'BTHierarchy',
                     source: new itowns.C3DTilesSource({
                         url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Demo/UD-Demo-vcity-py3dtilers-lyon/Lyon-1_2018_LODS/tileset.json',
-                    }),
-                    cityObjectConf: {
-                        secondaryMaterials: [
-                            new itowns.THREE.MeshStandardMaterial({
-                                color: 0xf0f420,
-                            }),
-                        ],
-                    },
+                    })
                 },
                 view,
             );
@@ -136,14 +129,7 @@
                     name: 'BTHierarchy',
                     source: new itowns.C3DTilesSource({
                         url: 'https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2015/Lyon-9_2015/tileset.json',
-                    }),
-                    cityObjectConf: {
-                        secondaryMaterials: [
-                            new itowns.THREE.MeshStandardMaterial({
-                                color: 0xf0f420,
-                            }),
-                        ],
-                    },
+                    })
                 },
                 view,
             );
@@ -160,7 +146,7 @@
             var ambLight = new itowns.THREE.AmbientLight(0xffffff, 0.2);
             view.scene.add(ambLight);
 
-            // ---------- ADD CAMERA POSITIONER WIDGET : ----------
+            // ---------- ADD LAYER CHOICE WIDGET : ----------
 
             const layerChoice = new itowns_widgets.LayerChoice(view, undefined,{
                 position: 'bottom-right',
