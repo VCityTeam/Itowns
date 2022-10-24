@@ -18,7 +18,9 @@ class C3DTCityObjectManager {
         let k = 0;
 
         for (const [index, mesh] of meshes.entries()) {
-            mesh.geometry = mesh.geometry.toNonIndexed();
+            if (this.index != null) {
+                mesh.geometry = mesh.geometry.toNonIndexed();
+            }
             const attributes = mesh.geometry.attributes;
             const totalVertices = attributes.position.count;
 
