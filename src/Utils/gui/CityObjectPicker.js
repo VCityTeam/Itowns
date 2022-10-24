@@ -39,7 +39,7 @@ class CityObjectPicker extends Widget {
         this.layerIDs = layerIDs;
         this.rangeFocus = config.rangeFocus || 200;
         this.tiltFocus = config.tiltFocus || 60;
-        this.refreshUI = config.refreshUI || this.refreshUI;
+        this.updateUI = config.updateUI || this.updateUI;
 
         this.coSelected = null;
         this.savedCameraPosRot = null;
@@ -52,12 +52,42 @@ class CityObjectPicker extends Widget {
         });
 
         window.addEventListener('mouseup', (event) => {
+            const leftMouseButton = event.button == 0;
+            const cameraTransformChanged = !this.comparePosRot(
+                this.savedCameraPosRot,
+                this.getCameraPosRot(),
+            );
+
+            if (
+                !leftMouseButton ||
+                cameraTransformChanged ||
+                this.checkIfElementIsInUI(event.target)
+            ) {
+                return;
+            }
+
             this.pickCityObject(event);
-            this.refreshUI();
+            this.updateUI();
         });
 
-        this.refreshUI();
+        this.updateUI();
         this.width = options.width || DEFAULT_OPTIONS.width;
+    }
+
+    /**
+     * Check if the given element is in the UI by checking if it's the same as the UI's domElement or if
+     * it's a child of the UI's domElement.
+     * @param {HTMLElement} element - The element to check if it's in the UI.
+     * @returns  {Boolean} A boolean value.
+     */
+    checkIfElementIsInUI(element) {
+        let result = element == this.domElement;
+
+        while (!result && element.parentElement) {
+            element = element.parentElement;
+            result = element == this.domElement;
+        }
+        return result;
     }
 
     saveCameraPosRot() {
@@ -99,16 +129,10 @@ class CityObjectPicker extends Widget {
      * @param {MouseEvent} event - the event object
      */
     pickCityObject(event) {
-        if (
-            event.button != 0 ||
-            !this.comparePosRot(this.savedCameraPosRot, this.getCameraPosRot())
-        ) {
-            return;
-        }
-
         // reset the selected city object
         if (this.getCityObjectSelected()) {
             this.getCityObjectSelected().setIndexMaterial(0); // set the material to the default one
+            this.view.notifyChange();
         }
 
         this.setInfo(this.createInfoObjectFromIntersectObject(event));
@@ -125,10 +149,10 @@ class CityObjectPicker extends Widget {
                 coManager.cityObjects[info.batchInfo.batchID],
             );
             this.getCityObjectSelected().setIndexMaterial(1); // set the material to the selected one
+            this.view.notifyChange();
         } else {
             this.setCityObjectSelected(null);
         }
-        this.view.notifyChange();
     }
 
     /**
@@ -166,7 +190,7 @@ class CityObjectPicker extends Widget {
     /**
      * It creates / refresh the UI of the city-object-picker.
      */
-    refreshUI() {
+    updateUI() {
         /* Creating a section, a title, and a list. */
         this.domElement.innerHTML = '';
         const selectionSection = document.createElement('section');
@@ -222,7 +246,7 @@ class CityObjectPicker extends Widget {
         const focusButton = document.createElement('button');
         focusButton.innerHTML = 'Focus';
         const _this = this;
-        focusButton.addEventListener('click', () => {
+        focusButton.onclick = () => {
             if (!_this.getCityObjectSelected()) {
                 return;
             }
@@ -242,7 +266,7 @@ class CityObjectPicker extends Widget {
             };
 
             CameraUtils.animateCameraToLookAtTarget(view, camera, params);
-        });
+        };
         return focusButton;
     }
 
