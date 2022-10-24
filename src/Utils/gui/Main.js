@@ -4,3 +4,4 @@ export { default as Minimap } from './Minimap';
 export { default as Scale } from './Scale';
 export { default as Searchbar } from './Searchbar';
 export { default as LayerChoice } from './LayerChoice';
+export { default as CityObjectPicker } from './CityObjectPicker';

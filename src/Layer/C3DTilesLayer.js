@@ -3,6 +3,7 @@ import GeometryLayer from 'Layer/GeometryLayer';
 import { init3dTilesLayer, pre3dTilesUpdate, process3dTilesNode } from 'Process/3dTilesProcessing';
 import C3DTileset from 'Core/3DTiles/C3DTileset';
 import C3DTExtensions from 'Core/3DTiles/C3DTExtensions';
+import C3DTCityObjectManager from 'Core/3DTiles/C3DTCityObjectManager';
 
 const update = process3dTilesNode();
 
@@ -38,7 +39,20 @@ class C3DTilesLayer extends GeometryLayer {
         this.isC3DTilesLayer = true;
         this.sseThreshold = config.sseThreshold || 16;
         this.cleanupDelay = config.cleanupDelay || 1000;
-        this.onTileContentLoaded = config.onTileContentLoaded || (() => {});
+        this.generateCityObjectsFlag = !!config.cityObjectConf;
+        this.secondaryMaterials = config.cityObjectConf.secondaryMaterials;
+
+        this.onTileContentLoaded = (tile) => {
+            if (config.onTileContentLoaded) {
+                config.onTileContentLoaded.call(this, tile);
+            }
+
+            /* A flag (boolean) to generate city objects. */
+            if (this.generateCityObjectsFlag) {
+                this.generateCityObjects.call(this, tile);
+            }
+        };
+
         this.protocol = '3d-tiles';
         // custom cesium shaders are not functional;
         this.overrideMaterials = config.overrideMaterials !== undefined ? config.overrideMaterials : true;
@@ -60,7 +74,7 @@ class C3DTilesLayer extends GeometryLayer {
                         if (this.tileset.extensionsRequired &&
                             this.tileset.extensionsRequired.includes(extensionUsed)) {
                             console.error(
-                                `3D Tiles tileset required extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
+                                `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
                         } else {
                             console.warn(
                                 `3D Tiles tileset used extension "${extensionUsed}" must be registered to the 3D Tiles layer of iTowns to be parsed and used.`);
@@ -79,6 +93,15 @@ class C3DTilesLayer extends GeometryLayer {
 
     update(context, layer, node) {
         return update(context, layer, node);
+    }
+
+    generateCityObjects(tile) {
+        tile.cityObjectManager = new C3DTCityObjectManager();
+
+        tile.cityObjectManager.createGeometryGroupsOfCityObjectsMeshes(
+            tile,
+            this.secondaryMaterials,
+        );
     }
 
     getObjectToUpdateForAttachedLayers(meta) {
