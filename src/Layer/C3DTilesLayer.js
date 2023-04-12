@@ -58,7 +58,19 @@ class C3DTilesLayer extends GeometryLayer {
         this.isC3DTilesLayer = true;
         this.sseThreshold = config.sseThreshold || 16;
         this.cleanupDelay = config.cleanupDelay || 1000;
-        this.onTileContentLoaded = config.onTileContentLoaded || (() => {});
+        // this.onTileContentLoaded = config.onTileContentLoaded || (() => {});
+        this.onTileContentLoaded = (tileContent) => {
+            tileContent.traverse((child) => {
+                if (child.geometry && child.geometry.attributes._BATCHID) {
+                    child.geometry.attributes._BATCHID.array.forEach((batchId) => {
+                        if (batchId != Math.round(batchId)) {
+                            console.warn(batchId, ' is not an integer');
+                            throw new Error('batch id error');
+                        }
+                    });
+                }
+            });
+        };
         this.protocol = '3d-tiles';
         this.overrideMaterials = config.overrideMaterials ?? false;
         this.name = config.name;
