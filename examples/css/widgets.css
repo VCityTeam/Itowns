@@ -247,6 +247,23 @@
     color: #222222;
 }
 
+/* ---------- CAMERA POSITIONNER WIDGET : ------------------------------------------------------------------------------- */
+
+
+#widgets-camera-positioner {
+    position: absolute;
+    z-index: 10;
+    padding: 0 10px;
+
+    color: #ffffff;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px;
+}
+
+.widgets-camera-positioner-inputvector {
+    display: none;
+}
+
 
 
 /* ---------- SCALE WIDGET SETTINGS : ------------------------------------------------------------------------------- */
